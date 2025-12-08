@@ -6,15 +6,16 @@ import { PrismaModule } from './prisma/prisma.module';
 import { RegisterService } from './register/register.service';
 import { RegisterModule } from './register/register.module';
 import { ConfigModule } from '@nestjs/config';
+import { WebhookController } from './webhook/webhook.controller';
 
 
 @Module({
   imports: [PrismaModule, RegisterModule ,
-ConfigModule.forRoot({
-  isGlobal: true
-})
+    ConfigModule.forRoot({
+        isGlobal: true
+     })
   ],
-  controllers: [AppController],
+  controllers: [AppController, WebhookController],
   providers: [AppService, PrismaService, RegisterService],
 })
 export class AppModule {}
