@@ -7,13 +7,15 @@ import { RegisterService } from './register/register.service';
 import { RegisterModule } from './register/register.module';
 import { ConfigModule } from '@nestjs/config';
 import { WebhookController } from './webhook/webhook.controller';
+import { RedeemModule } from './redeem/redeem.module';
 
 
 @Module({
   imports: [PrismaModule, RegisterModule ,
     ConfigModule.forRoot({
         isGlobal: true
-     })
+     }),
+    RedeemModule
   ],
   controllers: [AppController, WebhookController],
   providers: [AppService, PrismaService, RegisterService],
