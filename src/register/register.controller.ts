@@ -9,7 +9,6 @@ export class RegisterController {
   @Post()
   async register(@Body() createRegistrationDto: CreateRegistrationDto) {
     try {
-      // Step 1 + Step 2 handled together
       const registration = await this.registerService.createRegistrationWithPayment(createRegistrationDto);
       return registration;
     } catch (error) {
