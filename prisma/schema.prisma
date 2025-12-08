@@ -1,0 +1,78 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+    moduleFormat    = "cjs"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+
+// Registration + Membership combined
+model Registration {
+  id           String   @id @default(uuid())
+  firstName    String
+  lastName     String
+  email        String   @unique
+  phone        String?
+  teudatZehut  String   @unique
+  aliyahDate   DateTime
+  membershipId String   @unique
+  validFrom    DateTime
+  validTo      DateTime
+  isActive     Boolean  @default(true)
+
+  payments Payment[]
+  redeems  Redeem[]
+
+  createdAt DateTime @default(now())
+}
+
+// Category -> Partner
+model Category {
+  id       String     @id @default(uuid())
+  name     String
+  partners Partner[]
+}
+
+// Partner -> Category
+model Partner {
+  id         String    @id @default(uuid())
+  name       String
+  discount   String
+  categoryId String
+
+  category Category  @relation(fields: [categoryId], references: [id])
+  redeems  Redeem[]
+}
+
+// Redeem -> Registration + Partner
+model Redeem {
+  id             String     @id @default(uuid())
+  registrationId String
+  partnerId      String
+  redeemedAt     DateTime   @default(now())
+
+  registration Registration @relation(fields: [registrationId], references: [id])
+  partner      Partner      @relation(fields: [partnerId], references: [id])
+}
+
+// Payment -> Registration (Stripe)
+model Payment {
+  id              String   @id @default(uuid())
+  registrationId  String
+  stripeSessionId String   @unique
+  amount          Int
+  currency        String
+  status          String
+  createdAt       DateTime @default(now())
+
+  registration Registration @relation(fields: [registrationId], references: [id])
+}
