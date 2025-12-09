@@ -8,6 +8,9 @@ import { RegisterModule } from './register/register.module';
 import { ConfigModule } from '@nestjs/config';
 import { WebhookController } from './webhook/webhook.controller';
 import { RedeemModule } from './redeem/redeem.module';
+import { MailService } from './mail/mail.service';
+
+
 
 
 @Module({
@@ -15,9 +18,9 @@ import { RedeemModule } from './redeem/redeem.module';
     ConfigModule.forRoot({
         isGlobal: true
      }),
-    RedeemModule
+    RedeemModule,
   ],
   controllers: [AppController, WebhookController],
-  providers: [AppService, PrismaService, RegisterService],
+  providers: [AppService, PrismaService, RegisterService, MailService],
 })
 export class AppModule {}

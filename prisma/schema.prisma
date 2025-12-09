@@ -16,7 +16,6 @@ datasource db {
 }
 
 
-// Registration + Membership combined
 model Registration {
   id           String   @id @default(uuid())
   firstName    String

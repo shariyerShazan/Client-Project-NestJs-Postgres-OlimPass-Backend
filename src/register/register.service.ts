@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import Stripe from 'stripe';
 import { CreateRegistrationDto } from './dto/create-registration.dto';
+import { MailService } from 'src/mail/mail.service';
 
 @Injectable()
 export class RegisterService {
@@ -9,9 +10,8 @@ export class RegisterService {
     apiVersion: '2025-11-17.clover',
   });
 
-  constructor(private prisma: PrismaService) {}
+  constructor(private prisma: PrismaService  ,private mailService: MailService) {}
 
-  // Generate unique 6-digit membership ID
   private async generateUniqueMembershipId(): Promise<string> {
     let id: string;
     let exists: boolean;
@@ -26,7 +26,7 @@ export class RegisterService {
   }
 
   async createRegistrationWithPayment(dto: CreateRegistrationDto) {
-    // 1️⃣ Check duplicates
+
     const emailExists = await this.prisma.registration.findUnique({
       where: { email: dto.email },
     });
@@ -37,15 +37,13 @@ export class RegisterService {
     });
     if (teudatZehutExists) throw new Error('Teudat Zehut already registered');
 
-    // 2️⃣ Validity dates (keep as-is)
+    const years = parseInt(dto.validity[0])
     const validFrom = new Date();
     const validTo = new Date();
     validTo.setFullYear(validFrom.getFullYear() + parseInt(dto.validity[0]));
 
-    // 3️⃣ Generate membership ID
     const membershipId = await this.generateUniqueMembershipId();
 
-    // 4️⃣ Create registration
     const registration = await this.prisma.registration.create({
       data: {
         firstName: dto.firstName,
@@ -62,11 +60,10 @@ export class RegisterService {
       },
     });
 
-    // 5️⃣ Create Payment row first (pending)
     let paymentRecord = await this.prisma.payment.create({
       data: {
         registrationId: registration.id,
-        amount: 30000,
+        amount: 30000 * years,
         currency: 'ILS',
         status: 'pending',
         method: dto.paymentMethod,
@@ -75,10 +72,9 @@ export class RegisterService {
 
     let clientSecret: string | null = null;
 
-    // 6️⃣ Handle Stripe payments
     if (dto.paymentMethod === 'stripe') {
       const paymentIntent = await this.stripe.paymentIntents.create({
-        amount: 30000,
+        amount: 30000 * years,
         currency: 'ils',
         payment_method_types: ['card'],
         metadata: { registrationId: registration.id },
@@ -86,14 +82,12 @@ export class RegisterService {
 
       clientSecret = paymentIntent.client_secret;
 
-      // Update Payment with stripeSessionId
       paymentRecord = await this.prisma.payment.update({
         where: { id: paymentRecord.id },
         data: { stripeSessionId: paymentIntent.id },
       });
     }
 
-    // 7️⃣ Handle Visa/Mastercard
     if (['visa', 'mastercard'].includes(dto.paymentMethod)) {
       if (!dto.cardholderName || !dto.cardNumber || !dto.expireDate || !dto.cvc) {
         throw new Error('Card details are required for Visa/Mastercard payments');
@@ -109,21 +103,20 @@ export class RegisterService {
         },
       });
 
-      // For simplicity, mark card payments as completed immediately
       paymentRecord = await this.prisma.payment.update({
         where: { id: paymentRecord.id },
         data: { status: 'completed' },
       });
 
+      
       await this.prisma.registration.update({
         where: { id: registration.id },
         data: { isActive: true },
       });
     }
 
-    // 8️⃣ Handle GPay
     if (dto.paymentMethod === 'gpay') {
-      // GPay payments considered completed immediately
+
       paymentRecord = await this.prisma.payment.update({
         where: { id: paymentRecord.id },
         data: { status: 'completed' },
@@ -134,11 +127,17 @@ export class RegisterService {
         data: { isActive: true },
       });
     }
+
+    await this.mailService.sendMembershipEmail(
+      registration.email,
+      registration.firstName,
+      membershipId,
+    );
 
     return {
       registration,
       membershipId,
-      clientSecret, // only used for Stripe frontend confirmation
+      clientSecret, 
       payment: paymentRecord,
     };
   }
