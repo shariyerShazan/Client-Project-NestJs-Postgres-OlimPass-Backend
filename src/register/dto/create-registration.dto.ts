@@ -1,5 +1,5 @@
 import { IsString, IsEmail, IsOptional, IsDateString, IsEnum, IsNotEmpty } from 'class-validator';
-import { Type } from 'class-transformer';
+// import { Type } from 'class-transformer';
 
 export class CreateRegistrationDto {
   @IsString() @IsNotEmpty()

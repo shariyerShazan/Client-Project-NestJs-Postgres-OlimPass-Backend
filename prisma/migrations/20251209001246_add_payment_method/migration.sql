@@ -9,6 +9,7 @@ CREATE TABLE "Registration" (
     "aliyahDate" TIMESTAMP(3) NOT NULL,
     "membershipId" TEXT NOT NULL,
     "validFrom" TIMESTAMP(3) NOT NULL,
+    "paymentMethod" TEXT NOT NULL,
     "validTo" TIMESTAMP(3) NOT NULL,
     "isActive" BOOLEAN NOT NULL DEFAULT true,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,

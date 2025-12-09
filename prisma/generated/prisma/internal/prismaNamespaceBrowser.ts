@@ -84,6 +84,7 @@ export const RegistrationScalarFieldEnum = {
   aliyahDate: 'aliyahDate',
   membershipId: 'membershipId',
   validFrom: 'validFrom',
+  paymentMethod: 'paymentMethod',
   validTo: 'validTo',
   isActive: 'isActive',
   createdAt: 'createdAt'
@@ -127,6 +128,11 @@ export const PaymentScalarFieldEnum = {
   amount: 'amount',
   currency: 'currency',
   status: 'status',
+  method: 'method',
+  cardholderName: 'cardholderName',
+  cardNumber: 'cardNumber',
+  expireDate: 'expireDate',
+  cvc: 'cvc',
   createdAt: 'createdAt'
 } as const
 
