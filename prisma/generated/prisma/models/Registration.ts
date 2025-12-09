@@ -34,6 +34,7 @@ export type RegistrationMinAggregateOutputType = {
   aliyahDate: Date | null
   membershipId: string | null
   validFrom: Date | null
+  paymentMethod: string | null
   validTo: Date | null
   isActive: boolean | null
   createdAt: Date | null
@@ -49,6 +50,7 @@ export type RegistrationMaxAggregateOutputType = {
   aliyahDate: Date | null
   membershipId: string | null
   validFrom: Date | null
+  paymentMethod: string | null
   validTo: Date | null
   isActive: boolean | null
   createdAt: Date | null
@@ -64,6 +66,7 @@ export type RegistrationCountAggregateOutputType = {
   aliyahDate: number
   membershipId: number
   validFrom: number
+  paymentMethod: number
   validTo: number
   isActive: number
   createdAt: number
@@ -81,6 +84,7 @@ export type RegistrationMinAggregateInputType = {
   aliyahDate?: true
   membershipId?: true
   validFrom?: true
+  paymentMethod?: true
   validTo?: true
   isActive?: true
   createdAt?: true
@@ -96,6 +100,7 @@ export type RegistrationMaxAggregateInputType = {
   aliyahDate?: true
   membershipId?: true
   validFrom?: true
+  paymentMethod?: true
   validTo?: true
   isActive?: true
   createdAt?: true
@@ -111,6 +116,7 @@ export type RegistrationCountAggregateInputType = {
   aliyahDate?: true
   membershipId?: true
   validFrom?: true
+  paymentMethod?: true
   validTo?: true
   isActive?: true
   createdAt?: true
@@ -199,6 +205,7 @@ export type RegistrationGroupByOutputType = {
   aliyahDate: Date
   membershipId: string
   validFrom: Date
+  paymentMethod: string | null
   validTo: Date
   isActive: boolean
   createdAt: Date
@@ -235,6 +242,7 @@ export type RegistrationWhereInput = {
   aliyahDate?: Prisma.DateTimeFilter<"Registration"> | Date | string
   membershipId?: Prisma.StringFilter<"Registration"> | string
   validFrom?: Prisma.DateTimeFilter<"Registration"> | Date | string
+  paymentMethod?: Prisma.StringNullableFilter<"Registration"> | string | null
   validTo?: Prisma.DateTimeFilter<"Registration"> | Date | string
   isActive?: Prisma.BoolFilter<"Registration"> | boolean
   createdAt?: Prisma.DateTimeFilter<"Registration"> | Date | string
@@ -252,6 +260,7 @@ export type RegistrationOrderByWithRelationInput = {
   aliyahDate?: Prisma.SortOrder
   membershipId?: Prisma.SortOrder
   validFrom?: Prisma.SortOrder
+  paymentMethod?: Prisma.SortOrderInput | Prisma.SortOrder
   validTo?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -272,6 +281,7 @@ export type RegistrationWhereUniqueInput = Prisma.AtLeast<{
   phone?: Prisma.StringNullableFilter<"Registration"> | string | null
   aliyahDate?: Prisma.DateTimeFilter<"Registration"> | Date | string
   validFrom?: Prisma.DateTimeFilter<"Registration"> | Date | string
+  paymentMethod?: Prisma.StringNullableFilter<"Registration"> | string | null
   validTo?: Prisma.DateTimeFilter<"Registration"> | Date | string
   isActive?: Prisma.BoolFilter<"Registration"> | boolean
   createdAt?: Prisma.DateTimeFilter<"Registration"> | Date | string
@@ -289,6 +299,7 @@ export type RegistrationOrderByWithAggregationInput = {
   aliyahDate?: Prisma.SortOrder
   membershipId?: Prisma.SortOrder
   validFrom?: Prisma.SortOrder
+  paymentMethod?: Prisma.SortOrderInput | Prisma.SortOrder
   validTo?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -310,6 +321,7 @@ export type RegistrationScalarWhereWithAggregatesInput = {
   aliyahDate?: Prisma.DateTimeWithAggregatesFilter<"Registration"> | Date | string
   membershipId?: Prisma.StringWithAggregatesFilter<"Registration"> | string
   validFrom?: Prisma.DateTimeWithAggregatesFilter<"Registration"> | Date | string
+  paymentMethod?: Prisma.StringNullableWithAggregatesFilter<"Registration"> | string | null
   validTo?: Prisma.DateTimeWithAggregatesFilter<"Registration"> | Date | string
   isActive?: Prisma.BoolWithAggregatesFilter<"Registration"> | boolean
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Registration"> | Date | string
@@ -325,6 +337,7 @@ export type RegistrationCreateInput = {
   aliyahDate: Date | string
   membershipId: string
   validFrom: Date | string
+  paymentMethod?: string | null
   validTo: Date | string
   isActive?: boolean
   createdAt?: Date | string
@@ -342,6 +355,7 @@ export type RegistrationUncheckedCreateInput = {
   aliyahDate: Date | string
   membershipId: string
   validFrom: Date | string
+  paymentMethod?: string | null
   validTo: Date | string
   isActive?: boolean
   createdAt?: Date | string
@@ -359,6 +373,7 @@ export type RegistrationUpdateInput = {
   aliyahDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   membershipId?: Prisma.StringFieldUpdateOperationsInput | string
   validFrom?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  paymentMethod?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   validTo?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -376,6 +391,7 @@ export type RegistrationUncheckedUpdateInput = {
   aliyahDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   membershipId?: Prisma.StringFieldUpdateOperationsInput | string
   validFrom?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  paymentMethod?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   validTo?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -393,6 +409,7 @@ export type RegistrationCreateManyInput = {
   aliyahDate: Date | string
   membershipId: string
   validFrom: Date | string
+  paymentMethod?: string | null
   validTo: Date | string
   isActive?: boolean
   createdAt?: Date | string
@@ -408,6 +425,7 @@ export type RegistrationUpdateManyMutationInput = {
   aliyahDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   membershipId?: Prisma.StringFieldUpdateOperationsInput | string
   validFrom?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  paymentMethod?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   validTo?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -423,6 +441,7 @@ export type RegistrationUncheckedUpdateManyInput = {
   aliyahDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   membershipId?: Prisma.StringFieldUpdateOperationsInput | string
   validFrom?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  paymentMethod?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   validTo?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -438,6 +457,7 @@ export type RegistrationCountOrderByAggregateInput = {
   aliyahDate?: Prisma.SortOrder
   membershipId?: Prisma.SortOrder
   validFrom?: Prisma.SortOrder
+  paymentMethod?: Prisma.SortOrder
   validTo?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -453,6 +473,7 @@ export type RegistrationMaxOrderByAggregateInput = {
   aliyahDate?: Prisma.SortOrder
   membershipId?: Prisma.SortOrder
   validFrom?: Prisma.SortOrder
+  paymentMethod?: Prisma.SortOrder
   validTo?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -468,6 +489,7 @@ export type RegistrationMinOrderByAggregateInput = {
   aliyahDate?: Prisma.SortOrder
   membershipId?: Prisma.SortOrder
   validFrom?: Prisma.SortOrder
+  paymentMethod?: Prisma.SortOrder
   validTo?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -532,6 +554,7 @@ export type RegistrationCreateWithoutRedeemsInput = {
   aliyahDate: Date | string
   membershipId: string
   validFrom: Date | string
+  paymentMethod?: string | null
   validTo: Date | string
   isActive?: boolean
   createdAt?: Date | string
@@ -548,6 +571,7 @@ export type RegistrationUncheckedCreateWithoutRedeemsInput = {
   aliyahDate: Date | string
   membershipId: string
   validFrom: Date | string
+  paymentMethod?: string | null
   validTo: Date | string
   isActive?: boolean
   createdAt?: Date | string
@@ -580,6 +604,7 @@ export type RegistrationUpdateWithoutRedeemsInput = {
   aliyahDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   membershipId?: Prisma.StringFieldUpdateOperationsInput | string
   validFrom?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  paymentMethod?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   validTo?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -596,6 +621,7 @@ export type RegistrationUncheckedUpdateWithoutRedeemsInput = {
   aliyahDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   membershipId?: Prisma.StringFieldUpdateOperationsInput | string
   validFrom?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  paymentMethod?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   validTo?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -612,6 +638,7 @@ export type RegistrationCreateWithoutPaymentsInput = {
   aliyahDate: Date | string
   membershipId: string
   validFrom: Date | string
+  paymentMethod?: string | null
   validTo: Date | string
   isActive?: boolean
   createdAt?: Date | string
@@ -628,6 +655,7 @@ export type RegistrationUncheckedCreateWithoutPaymentsInput = {
   aliyahDate: Date | string
   membershipId: string
   validFrom: Date | string
+  paymentMethod?: string | null
   validTo: Date | string
   isActive?: boolean
   createdAt?: Date | string
@@ -660,6 +688,7 @@ export type RegistrationUpdateWithoutPaymentsInput = {
   aliyahDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   membershipId?: Prisma.StringFieldUpdateOperationsInput | string
   validFrom?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  paymentMethod?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   validTo?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -676,6 +705,7 @@ export type RegistrationUncheckedUpdateWithoutPaymentsInput = {
   aliyahDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   membershipId?: Prisma.StringFieldUpdateOperationsInput | string
   validFrom?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  paymentMethod?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   validTo?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -732,6 +762,7 @@ export type RegistrationSelect<ExtArgs extends runtime.Types.Extensions.Internal
   aliyahDate?: boolean
   membershipId?: boolean
   validFrom?: boolean
+  paymentMethod?: boolean
   validTo?: boolean
   isActive?: boolean
   createdAt?: boolean
@@ -750,6 +781,7 @@ export type RegistrationSelectCreateManyAndReturn<ExtArgs extends runtime.Types.
   aliyahDate?: boolean
   membershipId?: boolean
   validFrom?: boolean
+  paymentMethod?: boolean
   validTo?: boolean
   isActive?: boolean
   createdAt?: boolean
@@ -765,6 +797,7 @@ export type RegistrationSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.
   aliyahDate?: boolean
   membershipId?: boolean
   validFrom?: boolean
+  paymentMethod?: boolean
   validTo?: boolean
   isActive?: boolean
   createdAt?: boolean
@@ -780,12 +813,13 @@ export type RegistrationSelectScalar = {
   aliyahDate?: boolean
   membershipId?: boolean
   validFrom?: boolean
+  paymentMethod?: boolean
   validTo?: boolean
   isActive?: boolean
   createdAt?: boolean
 }
 
-export type RegistrationOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "firstName" | "lastName" | "email" | "phone" | "teudatZehut" | "aliyahDate" | "membershipId" | "validFrom" | "validTo" | "isActive" | "createdAt", ExtArgs["result"]["registration"]>
+export type RegistrationOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "firstName" | "lastName" | "email" | "phone" | "teudatZehut" | "aliyahDate" | "membershipId" | "validFrom" | "paymentMethod" | "validTo" | "isActive" | "createdAt", ExtArgs["result"]["registration"]>
 export type RegistrationInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   payments?: boolean | Prisma.Registration$paymentsArgs<ExtArgs>
   redeems?: boolean | Prisma.Registration$redeemsArgs<ExtArgs>
@@ -810,6 +844,7 @@ export type $RegistrationPayload<ExtArgs extends runtime.Types.Extensions.Intern
     aliyahDate: Date
     membershipId: string
     validFrom: Date
+    paymentMethod: string | null
     validTo: Date
     isActive: boolean
     createdAt: Date
@@ -1247,6 +1282,7 @@ export interface RegistrationFieldRefs {
   readonly aliyahDate: Prisma.FieldRef<"Registration", 'DateTime'>
   readonly membershipId: Prisma.FieldRef<"Registration", 'String'>
   readonly validFrom: Prisma.FieldRef<"Registration", 'DateTime'>
+  readonly paymentMethod: Prisma.FieldRef<"Registration", 'String'>
   readonly validTo: Prisma.FieldRef<"Registration", 'DateTime'>
   readonly isActive: Prisma.FieldRef<"Registration", 'Boolean'>
   readonly createdAt: Prisma.FieldRef<"Registration", 'DateTime'>
