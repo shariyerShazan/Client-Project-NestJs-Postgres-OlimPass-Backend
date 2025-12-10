@@ -20,9 +20,9 @@ model Registration {
   id           String   @id @default(uuid())
   firstName    String
   lastName     String
-  email        String   @unique
+  email        String   
   phone        String?
-  teudatZehut  String   @unique
+  teudatZehut  String   
   aliyahDate   DateTime
   membershipId String   @unique
   validFrom    DateTime

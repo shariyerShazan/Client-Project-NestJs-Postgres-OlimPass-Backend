@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import Stripe from 'stripe';
 import { CreateRegistrationDto } from './dto/create-registration.dto';
-import { MailService } from 'src/mail/mail.service';
+// import { MailService } from 'src/mail/mail.service';
 
 @Injectable()
 export class RegisterService {
@@ -10,7 +10,7 @@ export class RegisterService {
     apiVersion: '2025-11-17.clover',
   });
 
-  constructor(private prisma: PrismaService  ,private mailService: MailService) {}
+  constructor(private prisma: PrismaService ) {}
 
   private async generateUniqueMembershipId(): Promise<string> {
     let id: string;
@@ -27,13 +27,13 @@ export class RegisterService {
 
   async createRegistrationWithPayment(dto: CreateRegistrationDto) {
 
-    const emailExists = await this.prisma.registration.findUnique({
-      where: { email: dto.email },
+    const emailExists = await this.prisma.registration.findFirst({
+      where: { email: dto.email , isActive: true},
     });
     if (emailExists) throw new Error('Email already registered');
 
-    const teudatZehutExists = await this.prisma.registration.findUnique({
-      where: { teudatZehut: dto.teudatZehut },
+    const teudatZehutExists = await this.prisma.registration.findFirst({
+      where: { teudatZehut: dto.teudatZehut , isActive: true },
     });
     if (teudatZehutExists) throw new Error('Teudat Zehut already registered');
 
@@ -52,7 +52,7 @@ export class RegisterService {
         phone: dto.phone,
         teudatZehut: dto.teudatZehut,
         aliyahDate: new Date(dto.aliyahDate),
-        membershipId,
+        membershipId : "fake"+membershipId,
         validFrom,
         validTo,
         isActive: false,
@@ -128,15 +128,9 @@ export class RegisterService {
       });
     }
 
-    await this.mailService.sendMembershipEmail(
-      registration.email,
-      registration.firstName,
-      membershipId,
-    );
-
     return {
       registration,
-      membershipId,
+      membershipId: registration.isActive ? membershipId : "",
       clientSecret, 
       payment: paymentRecord,
     };

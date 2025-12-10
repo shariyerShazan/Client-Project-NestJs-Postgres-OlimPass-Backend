@@ -55,7 +55,7 @@ export class MailService {
                     border-radius: 8px;
                     padding: 15px;
                     margin-top: 20px;
-                    border-left: 4px solid #4CAF50;
+                    border-left: 4px solid #F80B58;
                     ">
                     <p style="
                         font-size: 16px;
@@ -67,7 +67,7 @@ export class MailService {
                     
                     <p style="
                         font-size: 22px;
-                        color: #4CAF50;
+                        color: #F80B58;
                         font-weight: bold;
                         margin: 5px 0 0 0;
                     ">
