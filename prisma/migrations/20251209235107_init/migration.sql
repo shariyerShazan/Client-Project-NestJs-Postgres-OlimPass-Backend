@@ -7,9 +7,9 @@ CREATE TABLE "Registration" (
     "phone" TEXT,
     "teudatZehut" TEXT NOT NULL,
     "aliyahDate" TIMESTAMP(3) NOT NULL,
-    "membershipId" TEXT NOT NULL,
+    "membershipId" TEXT,
     "validFrom" TIMESTAMP(3) NOT NULL,
-    "paymentMethod" TEXT NOT NULL,
+    "paymentMethod" TEXT,
     "validTo" TIMESTAMP(3) NOT NULL,
     "isActive" BOOLEAN NOT NULL DEFAULT true,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -49,23 +49,19 @@ CREATE TABLE "Redeem" (
 CREATE TABLE "Payment" (
     "id" TEXT NOT NULL,
     "registrationId" TEXT NOT NULL,
-    "stripeSessionId" TEXT NOT NULL,
+    "stripeSessionId" TEXT,
     "amount" INTEGER NOT NULL,
     "currency" TEXT NOT NULL,
     "status" TEXT NOT NULL,
+    "method" TEXT,
+    "cardholderName" TEXT,
+    "cardNumber" TEXT,
+    "expireDate" TEXT,
+    "cvc" TEXT,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT "Payment_pkey" PRIMARY KEY ("id")
 );
-
--- CreateIndex
-CREATE UNIQUE INDEX "Registration_email_key" ON "Registration"("email");
-
--- CreateIndex
-CREATE UNIQUE INDEX "Registration_teudatZehut_key" ON "Registration"("teudatZehut");
-
--- CreateIndex
-CREATE UNIQUE INDEX "Registration_membershipId_key" ON "Registration"("membershipId");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Payment_stripeSessionId_key" ON "Payment"("stripeSessionId");

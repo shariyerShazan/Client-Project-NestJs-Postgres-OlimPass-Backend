@@ -270,15 +270,15 @@ export type RegistrationOrderByWithRelationInput = {
 
 export type RegistrationWhereUniqueInput = Prisma.AtLeast<{
   id?: string
-  email?: string
-  teudatZehut?: string
   membershipId?: string
   AND?: Prisma.RegistrationWhereInput | Prisma.RegistrationWhereInput[]
   OR?: Prisma.RegistrationWhereInput[]
   NOT?: Prisma.RegistrationWhereInput | Prisma.RegistrationWhereInput[]
   firstName?: Prisma.StringFilter<"Registration"> | string
   lastName?: Prisma.StringFilter<"Registration"> | string
+  email?: Prisma.StringFilter<"Registration"> | string
   phone?: Prisma.StringNullableFilter<"Registration"> | string | null
+  teudatZehut?: Prisma.StringFilter<"Registration"> | string
   aliyahDate?: Prisma.DateTimeFilter<"Registration"> | Date | string
   validFrom?: Prisma.DateTimeFilter<"Registration"> | Date | string
   paymentMethod?: Prisma.StringNullableFilter<"Registration"> | string | null
@@ -287,7 +287,7 @@ export type RegistrationWhereUniqueInput = Prisma.AtLeast<{
   createdAt?: Prisma.DateTimeFilter<"Registration"> | Date | string
   payments?: Prisma.PaymentListRelationFilter
   redeems?: Prisma.RedeemListRelationFilter
-}, "id" | "email" | "teudatZehut" | "membershipId">
+}, "id" | "membershipId">
 
 export type RegistrationOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
