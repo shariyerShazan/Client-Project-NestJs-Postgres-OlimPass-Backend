@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import Stripe from 'stripe';
 import { CreateRegistrationDto } from './dto/create-registration.dto';
+import { MailService } from 'src/mail/mail.service';
 // import { MailService } from 'src/mail/mail.service';
 
 @Injectable()
@@ -10,7 +11,7 @@ export class RegisterService {
     apiVersion: '2025-11-17.clover',
   });
 
-  constructor(private prisma: PrismaService ) {}
+  constructor(private prisma: PrismaService ,  private mailService: MailService) {}
 
   private async generateUniqueMembershipId(): Promise<string> {
     let id: string;
@@ -27,15 +28,26 @@ export class RegisterService {
 
   async createRegistrationWithPayment(dto: CreateRegistrationDto) {
 
-    const emailExists = await this.prisma.registration.findFirst({
-      where: { email: dto.email , isActive: true},
+  const existing = await this.prisma.registration.findFirst({
+      where: {
+        AND: [
+          { isActive: true },
+          {
+            OR: [
+              { email: dto.email },
+              { teudatZehut: dto.teudatZehut },
+            ],
+          },
+        ],
+      },
     });
-    if (emailExists) throw new Error('Email already registered');
 
-    const teudatZehutExists = await this.prisma.registration.findFirst({
-      where: { teudatZehut: dto.teudatZehut , isActive: true },
-    });
-    if (teudatZehutExists) throw new Error('Teudat Zehut already registered');
+   if (existing) {
+    const today = new Date();
+    if (existing.validTo > today) {
+      throw new Error('You are already registered. Your membership is still valid.');
+    }
+   }
 
     const years = parseInt(dto.validity[0])
     const validFrom = new Date();
@@ -52,7 +64,7 @@ export class RegisterService {
         phone: dto.phone,
         teudatZehut: dto.teudatZehut,
         aliyahDate: new Date(dto.aliyahDate),
-        membershipId : "fake"+membershipId,
+        membershipId : membershipId ,
         validFrom,
         validTo,
         isActive: false,
@@ -81,7 +93,26 @@ export class RegisterService {
       });
 
       clientSecret = paymentIntent.client_secret;
+        let status = paymentIntent.status;
+        // console.log(status, "status-1")
+          const start = Date.now();
+          while (status !== 'succeeded' && status !== 'requires_payment_method') {
+            if (Date.now() - start > 10000) break; 
+            await new Promise((r) => setTimeout(r, 1000));
+            const pi = await this.stripe.paymentIntents.retrieve(paymentIntent.id);
+            status = pi.status;
+          }
 
+          if (status === 'succeeded') {
+            await this.prisma.registration.update({
+              where: { id: registration.id },
+              data: { isActive: true, membershipId },
+            });
+            await this.prisma.payment.update({
+              where: { id: paymentRecord.id },
+              data: { status: 'succeeded' },
+            });
+          }
       paymentRecord = await this.prisma.payment.update({
         where: { id: paymentRecord.id },
         data: { stripeSessionId: paymentIntent.id },
@@ -108,7 +139,12 @@ export class RegisterService {
         data: { status: 'completed' },
       });
 
-      
+        await this.mailService.sendMembershipEmail(
+          registration.email,
+          registration.firstName,
+          membershipId,
+        );
+        
       await this.prisma.registration.update({
         where: { id: registration.id },
         data: { isActive: true },
@@ -121,16 +157,23 @@ export class RegisterService {
         where: { id: paymentRecord.id },
         data: { status: 'completed' },
       });
-
+      
+        await this.mailService.sendMembershipEmail(
+          registration.email,
+          registration.firstName,
+          membershipId,
+        );
+        
       await this.prisma.registration.update({
         where: { id: registration.id },
         data: { isActive: true },
       });
     }
 
+
     return {
       registration,
-      membershipId: registration.isActive ? membershipId : "",
+      membershipId: membershipId ,
       clientSecret, 
       payment: paymentRecord,
     };
