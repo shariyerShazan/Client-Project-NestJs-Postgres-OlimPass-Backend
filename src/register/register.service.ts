@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import Stripe from 'stripe';
 import { CreateRegistrationDto } from './dto/create-registration.dto';
-// import { MailService } from 'src/mail/mail.service';
+import { MailService } from 'src/mail/mail.service';
 
 @Injectable()
 export class RegisterService {
@@ -10,7 +10,7 @@ export class RegisterService {
     apiVersion: '2025-11-17.clover',
   });
 
-  constructor(private prisma: PrismaService ) {}
+  constructor(private prisma: PrismaService, private mailService: MailService) {}
 
   private async generateUniqueMembershipId(): Promise<string> {
     let id: string;
@@ -26,21 +26,31 @@ export class RegisterService {
   }
 
   async createRegistrationWithPayment(dto: CreateRegistrationDto) {
-
-    const emailExists = await this.prisma.registration.findFirst({
-      where: { email: dto.email , isActive: true},
+    const existing = await this.prisma.registration.findFirst({
+      where: {
+        AND: [
+          { isActive: true },
+          {
+            OR: [
+              { email: dto.email },
+              { teudatZehut: dto.teudatZehut },
+            ],
+          },
+        ],
+      },
     });
-    if (emailExists) throw new Error('Email already registered');
 
-    const teudatZehutExists = await this.prisma.registration.findFirst({
-      where: { teudatZehut: dto.teudatZehut , isActive: true },
-    });
-    if (teudatZehutExists) throw new Error('Teudat Zehut already registered');
+    if (existing) {
+      const today = new Date();
+      if (existing.validTo > today) {
+        throw new Error('You are already registered. Your membership is still valid.');
+      }
+    }
 
-    const years = parseInt(dto.validity[0])
+    const years = parseInt(dto.validity[0]);
     const validFrom = new Date();
     const validTo = new Date();
-    validTo.setFullYear(validFrom.getFullYear() + parseInt(dto.validity[0]));
+    validTo.setFullYear(validFrom.getFullYear() + years);
 
     const membershipId = await this.generateUniqueMembershipId();
 
@@ -52,7 +62,7 @@ export class RegisterService {
         phone: dto.phone,
         teudatZehut: dto.teudatZehut,
         aliyahDate: new Date(dto.aliyahDate),
-        membershipId : "fake"+membershipId,
+        membershipId,
         validFrom,
         validTo,
         isActive: false,
@@ -60,78 +70,30 @@ export class RegisterService {
       },
     });
 
-    let paymentRecord = await this.prisma.payment.create({
+    const amount = 30000 * years;
+
+    const paymentIntent = await this.stripe.paymentIntents.create({
+      amount,
+      currency: 'ils',
+      payment_method_types: ['card'], 
+      metadata: { registrationId: registration.id, paymentMethod: dto.paymentMethod },
+    });
+
+    const paymentRecord = await this.prisma.payment.create({
       data: {
         registrationId: registration.id,
-        amount: 30000 * years,
+        amount,
         currency: 'ILS',
         status: 'pending',
         method: dto.paymentMethod,
+        stripeSessionId: paymentIntent.id,
       },
     });
 
-    let clientSecret: string | null = null;
-
-    if (dto.paymentMethod === 'stripe') {
-      const paymentIntent = await this.stripe.paymentIntents.create({
-        amount: 30000 * years,
-        currency: 'ils',
-        payment_method_types: ['card'],
-        metadata: { registrationId: registration.id },
-      });
-
-      clientSecret = paymentIntent.client_secret;
-
-      paymentRecord = await this.prisma.payment.update({
-        where: { id: paymentRecord.id },
-        data: { stripeSessionId: paymentIntent.id },
-      });
-    }
-
-    if (['visa', 'mastercard'].includes(dto.paymentMethod)) {
-      if (!dto.cardholderName || !dto.cardNumber || !dto.expireDate || !dto.cvc) {
-        throw new Error('Card details are required for Visa/Mastercard payments');
-      }
-
-      paymentRecord = await this.prisma.payment.update({
-        where: { id: paymentRecord.id },
-        data: {
-          cardholderName: dto.cardholderName,
-          cardNumber: dto.cardNumber,
-          expireDate: dto.expireDate,
-          cvc: dto.cvc,
-        },
-      });
-
-      paymentRecord = await this.prisma.payment.update({
-        where: { id: paymentRecord.id },
-        data: { status: 'completed' },
-      });
-
-      
-      await this.prisma.registration.update({
-        where: { id: registration.id },
-        data: { isActive: true },
-      });
-    }
-
-    if (dto.paymentMethod === 'gpay') {
-
-      paymentRecord = await this.prisma.payment.update({
-        where: { id: paymentRecord.id },
-        data: { status: 'completed' },
-      });
-
-      await this.prisma.registration.update({
-        where: { id: registration.id },
-        data: { isActive: true },
-      });
-    }
-
     return {
       registration,
-      membershipId: registration.isActive ? membershipId : "",
-      clientSecret, 
+      membershipId,
+      clientSecret: paymentIntent.client_secret,
       payment: paymentRecord,
     };
   }

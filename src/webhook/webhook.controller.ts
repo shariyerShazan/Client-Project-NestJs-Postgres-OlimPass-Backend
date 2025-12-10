@@ -17,7 +17,7 @@ export class WebhookController {
         where: { membershipId: id },
       });
       exists = !!user;
-    } while (exists);
+    } while (exists); 
     return id;
   }
   constructor(private prisma: PrismaService , private mailService: MailService) {}
@@ -86,6 +86,6 @@ export class WebhookController {
         console.log(`Unhandled event type ${event.type}`);
     }
 
-    res.json({ received: true });
+    res.json({ received: true , success: true});
   }
 }

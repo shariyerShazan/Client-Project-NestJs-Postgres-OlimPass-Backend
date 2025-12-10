@@ -9,6 +9,8 @@ import { ConfigModule } from '@nestjs/config';
 import { WebhookController } from './webhook/webhook.controller';
 import { RedeemModule } from './redeem/redeem.module';
 import { MailService } from './mail/mail.service';
+import { ScheduleModule } from '@nestjs/schedule';
+import { ExpireRegisterService } from './expire-register/expire-register.service';
 
 
 
@@ -19,8 +21,9 @@ import { MailService } from './mail/mail.service';
         isGlobal: true
      }),
     RedeemModule,
+    ScheduleModule.forRoot(),
   ],
   controllers: [AppController, WebhookController],
-  providers: [AppService, PrismaService, RegisterService, MailService],
+  providers: [AppService, PrismaService, RegisterService, MailService, ExpireRegisterService],
 })
 export class AppModule {}

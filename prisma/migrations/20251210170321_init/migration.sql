@@ -7,7 +7,7 @@ CREATE TABLE "Registration" (
     "phone" TEXT,
     "teudatZehut" TEXT NOT NULL,
     "aliyahDate" TIMESTAMP(3) NOT NULL,
-    "membershipId" TEXT,
+    "membershipId" TEXT NOT NULL,
     "validFrom" TIMESTAMP(3) NOT NULL,
     "paymentMethod" TEXT,
     "validTo" TIMESTAMP(3) NOT NULL,
@@ -62,6 +62,9 @@ CREATE TABLE "Payment" (
 
     CONSTRAINT "Payment_pkey" PRIMARY KEY ("id")
 );
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Registration_membershipId_key" ON "Registration"("membershipId");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Payment_stripeSessionId_key" ON "Payment"("stripeSessionId");
