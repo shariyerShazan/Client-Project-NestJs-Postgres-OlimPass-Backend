@@ -97,4 +97,17 @@ export class RegisterService {
       payment: paymentRecord,
     };
   }
+
+
+  async getRegistrationById(id: string) {
+  const registration = await this.prisma.registration.findUnique({
+    where: { id },
+  });
+
+  if (!registration) {
+    throw new Error('Registration not found');
+  }
+
+  return registration;
+}
 }
