@@ -8,7 +8,9 @@ import { CreateRegistrationDto } from './dto/create-registration.dto';
 export class RegisterService {
   private stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, { apiVersion: '2025-11-17.clover' });
 
-  constructor(private prisma: PrismaService, private mailService: MailService) {}
+  constructor(private prisma: PrismaService
+    // , private mailService: MailService
+  ) {}
 
   private async generateUniqueMembershipId(): Promise<string> {
     let id: string;
@@ -63,7 +65,7 @@ export class RegisterService {
         phone: dto.phone,
         teudatZehut: dto.teudatZehut,
         aliyahDate: new Date(dto.aliyahDate),
-        membershipId,
+        membershipId : "InActive"+membershipId,
         validFrom,
         validTo,
         isActive: false,
@@ -109,11 +111,11 @@ const paymentIntent = await this.stripe.paymentIntents.create({
       },
     });
 
-     await this.mailService.sendMembershipEmail(
-          registration.email,
-          registration.firstName,
-          membershipId,
-        );
+    //  await this.mailService.sendMembershipEmail(
+    //       registration.email,
+    //       registration.firstName,
+    //       membershipId,
+    //     );
 
     return {
       registration,
