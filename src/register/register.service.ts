@@ -1,14 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import Stripe from 'stripe';
-import { CreateRegistrationDto } from './dto/create-registration.dto';
 import { MailService } from 'src/mail/mail.service';
+import { CreateRegistrationDto } from './dto/create-registration.dto';
 
 @Injectable()
 export class RegisterService {
-  private stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-    apiVersion: '2025-11-17.clover',
-  });
+  private stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, { apiVersion: '2025-11-17.clover' });
 
   constructor(private prisma: PrismaService, private mailService: MailService) {}
 
@@ -26,6 +24,7 @@ export class RegisterService {
   }
 
   async createRegistrationWithPayment(dto: CreateRegistrationDto) {
+    // Already registered check
     const existing = await this.prisma.registration.findFirst({
       where: {
         AND: [
@@ -47,6 +46,7 @@ export class RegisterService {
       }
     }
 
+    // Validity calculation
     const years = parseInt(dto.validity[0]);
     const validFrom = new Date();
     const validTo = new Date();
@@ -54,6 +54,7 @@ export class RegisterService {
 
     const membershipId = await this.generateUniqueMembershipId();
 
+    // Registration creation
     const registration = await this.prisma.registration.create({
       data: {
         firstName: dto.firstName,
@@ -70,44 +71,66 @@ export class RegisterService {
       },
     });
 
-    const amount = 30000 * years;
+    const amount = 30000 * years; 
 
-    const paymentIntent = await this.stripe.paymentIntents.create({
-      amount,
-      currency: 'ils',
-      payment_method_types: ['card'], 
-      metadata: { registrationId: registration.id, paymentMethod: dto.paymentMethod },
-    });
+const paymentIntent = await this.stripe.paymentIntents.create({
+  amount,
+  currency: 'ils',
+  confirm: true,
+  payment_method_data: {
+    type: 'card',
+    card: { token: dto.stripeToken },
+  } as any,
+  automatic_payment_methods: {
+    enabled: true,
+    allow_redirects: 'never',
+  },
+  metadata: {
+    registrationId: registration.id,
+    paymentMethod: dto.paymentMethod,
+  },
+});
 
+
+
+
+
+
+
+    // Save payment record
     const paymentRecord = await this.prisma.payment.create({
       data: {
         registrationId: registration.id,
         amount,
         currency: 'ILS',
-        status: 'pending',
+        status: paymentIntent.status === 'succeeded' ? 'paid' : 'pending',
         method: dto.paymentMethod,
         stripeSessionId: paymentIntent.id,
       },
     });
 
+     await this.mailService.sendMembershipEmail(
+          registration.email,
+          registration.firstName,
+          membershipId,
+        );
+
     return {
       registration,
       membershipId,
-      clientSecret: paymentIntent.client_secret,
       payment: paymentRecord,
     };
   }
 
-
   async getRegistrationById(id: string) {
-  const registration = await this.prisma.registration.findUnique({
-    where: { id },
-  });
+    const registration = await this.prisma.registration.findUnique({
+      where: { id },
+    });
 
-  if (!registration) {
-    throw new Error('Registration not found');
+    if (!registration) {
+      throw new Error('Registration not found');
+    }
+
+    return registration;
   }
-
-  return registration;
-}
 }

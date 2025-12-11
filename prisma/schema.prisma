@@ -28,7 +28,7 @@ model Registration {
   validFrom    DateTime
   paymentMethod       String?
   validTo      DateTime
-  isActive     Boolean  @default(true)
+  isActive     Boolean  @default(false)
 
   payments Payment[]
   redeems  Redeem[]
