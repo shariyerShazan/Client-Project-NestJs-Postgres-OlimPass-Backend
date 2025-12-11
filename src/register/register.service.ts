@@ -8,53 +8,49 @@ import { CreateRegistrationDto } from './dto/create-registration.dto';
 export class RegisterService {
   private stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, { apiVersion: '2025-11-17.clover' });
 
-  constructor(private prisma: PrismaService, private mailService: MailService) {}
+  constructor(private prisma: PrismaService) {}
+//   private generate6DigitId(): string {
+//     return Math.floor(100000 + Math.random() * 900000).toString();
+//   }
 
   private async generateUniqueMembershipId(): Promise<string> {
     let id: string;
     let exists: boolean;
     do {
       id = Math.floor(100000 + Math.random() * 900000).toString();
-      const user = await this.prisma.registration.findUnique({
-        where: { membershipId: id },
-      });
+      const user = await this.prisma.registration.findUnique({ where: { membershipId: id } });
       exists = !!user;
     } while (exists);
     return id;
   }
 
   async createRegistrationWithPayment(dto: CreateRegistrationDto) {
-    // Already registered check
-    const existing = await this.prisma.registration.findFirst({
-      where: {
-        AND: [
-          { isActive: true },
-          {
-            OR: [
-              { email: dto.email },
-              { teudatZehut: dto.teudatZehut },
-            ],
-          },
-        ],
-      },
-    });
 
-    if (existing) {
-      const today = new Date();
-      if (existing.validTo > today) {
-        throw new Error('You are already registered. Your membership is still valid.');
-      }
-    }
 
-    // Validity calculation
-    const years = parseInt(dto.validity[0]);
+     const emailExists = await this.prisma.registration.findUnique({
+    where: { email: dto.email },
+  });
+  if (emailExists) {
+    throw new Error('Email already registered');
+  }
+
+  const teudatZehutExists = await this.prisma.registration.findUnique({
+    where: { teudatZehut: dto.teudatZehut },
+  });
+  if (teudatZehutExists) {
+    throw new Error('Teudat Zehut already registered');
+  }
+
     const validFrom = new Date();
     const validTo = new Date();
     validTo.setFullYear(validFrom.getFullYear() + years);
 
     const membershipId = await this.generateUniqueMembershipId();
 
-    // Registration creation
+    // Unique membershipId generate
+    const membershipId = await this.generateUniqueMembershipId();
+
+    // Registration create
     const registration = await this.prisma.registration.create({
       data: {
         firstName: dto.firstName,
@@ -63,7 +59,7 @@ export class RegisterService {
         phone: dto.phone,
         teudatZehut: dto.teudatZehut,
         aliyahDate: new Date(dto.aliyahDate),
-        membershipId,
+        membershipId,  
         validFrom,
         validTo,
         isActive: false,
@@ -71,26 +67,13 @@ export class RegisterService {
       },
     });
 
-    const amount = 30000 * years; 
 
-const paymentIntent = await this.stripe.paymentIntents.create({
-  amount,
-  currency: 'ils',
-  confirm: true,
-  payment_method_data: {
-    type: 'card',
-    card: { token: dto.stripeToken },
-  } as any,
-  automatic_payment_methods: {
-    enabled: true,
-    allow_redirects: 'never',
-  },
-  metadata: {
-    registrationId: registration.id,
-    paymentMethod: dto.paymentMethod,
-  },
-});
-
+    const paymentIntent = await this.stripe.paymentIntents.create({
+      amount: 30000, 
+      currency: 'ils',
+      payment_method_types: ['card'], 
+      metadata: { registrationId: registration.id },
+    });
 
 
 
@@ -118,7 +101,7 @@ const paymentIntent = await this.stripe.paymentIntents.create({
     return {
       registration,
       membershipId,
-      payment: paymentRecord,
+      clientSecret: paymentIntent.client_secret,
     };
   }
 
