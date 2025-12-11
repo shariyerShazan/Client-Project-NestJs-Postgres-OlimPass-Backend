@@ -37,7 +37,7 @@ export class WebhookController {
 
     // Handle the event
     switch (event.type) {
-      case 'payment_intent.created': 
+      case 'payment_intent.succeeded': 
         const paymentIntent = event.data.object as Stripe.PaymentIntent;
         const registrationId = paymentIntent.metadata.registrationId;
 

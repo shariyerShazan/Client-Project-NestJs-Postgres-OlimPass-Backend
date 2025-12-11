@@ -1,7 +1,7 @@
 
 import 'dotenv/config';
 import { PrismaPg } from '@prisma/adapter-pg';
-import { PrismaClient } from './generated/prisma/client.js';
+import { PrismaClient } from './generated/prisma/client';
 import { categories } from './data/category/index.js';
 
 
