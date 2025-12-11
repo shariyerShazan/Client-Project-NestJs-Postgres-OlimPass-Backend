@@ -8,22 +8,22 @@ export class PartnerController {
   constructor(private service: PartnerService) {}
 
   @Post()
-  create(@Body() dto: CreatePartnerDto) {
+  async create(@Body() dto: CreatePartnerDto) {
     return this.service.create(dto);
   }
 
   @Get()
-  findAll() {
+  async findAll() {
     return this.service.findAll();
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
+  async findOne(@Param('id') id: string) {
     return this.service.findOne(id);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
+  async remove(@Param('id') id: string) {
     return this.service.delete(id);
   }
 }
