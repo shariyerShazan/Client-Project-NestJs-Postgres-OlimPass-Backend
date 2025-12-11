@@ -16,6 +16,7 @@ export class RegisterController {
         data: registration,
       };
     } catch (error) {
+       console.error(error)
       throw new HttpException(
         {
           success: false,

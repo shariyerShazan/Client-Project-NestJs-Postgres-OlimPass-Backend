@@ -1,4 +1,4 @@
-import { IsString, IsEmail, IsOptional, IsDateString, IsEnum, IsNotEmpty } from 'class-validator';
+import { IsString, IsEmail, IsOptional, IsDateString, IsEnum, IsNotEmpty, isString } from 'class-validator';
 // import { Type } from 'class-transformer';
 
 export class CreateRegistrationDto {
@@ -26,15 +26,9 @@ export class CreateRegistrationDto {
   @IsString() @IsNotEmpty()
   cardholderName: string;
 
-  @IsString() @IsNotEmpty()
-  cardNumber: string;
-
-  @IsString() @IsNotEmpty()
-  expireDate: string;
-
-  @IsString() @IsNotEmpty()
-  cvc: string;
-
   @IsEnum(['stripe','visa','mastercard','gpay'])
   paymentMethod: string;
+
+  @IsString() @IsNotEmpty()
+  stripeToken: string;
 }
