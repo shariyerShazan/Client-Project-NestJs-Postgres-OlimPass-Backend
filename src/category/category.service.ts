@@ -7,39 +7,52 @@ import { CreateCategoryDto } from './dto/create-category.dto';
 export class CategoryService {
   constructor(private prisma: PrismaService) {}
 
-  async create(data: CreateCategoryDto) {
-    try {
-      const category = await this.prisma.category.create({
-        data: {
-          name: data.name,
-          partners: {
-            create: data.partners || [],
-          },
-        },
-        include: { partners: true },
-      });
+async create(data: CreateCategoryDto) {
+  try {
+    // Check if a category with the same name already exists
+    const existingCategory = await this.prisma.category.findFirst({
+      where: { name: data.name },
+    });
 
-      return {
-        success: true,
-        message: 'Category created successfully',
-        data: category,
-      };
-    } catch (error) {
+    if (existingCategory) {
       throw new HttpException(
         {
           success: false,
-          message: 'Failed to create category',
-          error: error.message,
+          message: 'Category with this name already exists',
         },
-        HttpStatus.BAD_REQUEST,
+        HttpStatus.CONFLICT,
       );
     }
+
+    const category = await this.prisma.category.create({
+      data,
+      include: { partners: true },
+    });
+
+    return {
+      success: true,
+      message: 'Category created successfully',
+      data: category,
+    };
+  } catch (error) {
+    if (error instanceof HttpException) throw error;
+
+    throw new HttpException(
+      {
+        success: false,
+        message: 'Failed to create category',
+        error: error.message,
+      },
+      HttpStatus.BAD_REQUEST,
+    );
   }
+}
+
 
   async findAll() {
     try {
       const categories = await this.prisma.category.findMany({
-        include: { partners: true },
+        include: { partners: true }, // Populate partners
       });
 
       return {
@@ -63,15 +76,12 @@ export class CategoryService {
     try {
       const category = await this.prisma.category.findUnique({
         where: { id },
-        include: { partners: true },
+        include: { partners: true }, // Populate partners
       });
 
       if (!category) {
         throw new HttpException(
-          {
-            success: false,
-            message: 'Category not found',
-          },
+          { success: false, message: 'Category not found' },
           HttpStatus.NOT_FOUND,
         );
       }
@@ -99,6 +109,7 @@ export class CategoryService {
     try {
       const category = await this.prisma.category.delete({
         where: { id },
+        include: { partners: true }, 
       });
 
       return {

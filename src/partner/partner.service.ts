@@ -1,5 +1,5 @@
 // partner/partner.service.ts
-import { Injectable, NotFoundException, InternalServerErrorException } from '@nestjs/common';
+import { Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreatePartnerDto } from './dto/create-partner.dto';
 
@@ -7,58 +7,52 @@ import { CreatePartnerDto } from './dto/create-partner.dto';
 export class PartnerService {
   constructor(private prisma: PrismaService) {}
 
-  async create(data: CreatePartnerDto) {
-    try {
-      const partner = await this.prisma.partner.create({ data });
+  // Only create
+async create(data: CreatePartnerDto) {
+  try {
+    // Check if category exists
+    const category = await this.prisma.category.findUnique({
+      where: { id: data.categoryId },
+    });
 
-      return {
-        success: true,
-        message: 'Partner created successfully',
-        data: partner,
-      };
-    } catch (error) {
-      throw new InternalServerErrorException('Failed to create partner');
+    if (!category) {
+      throw new NotFoundException('Category not found');
     }
-  }
 
-  async findAll() {
-    try {
-      const partners = await this.prisma.partner.findMany({
-        include: { category: true },
-      });
+        const existingPartner = await this.prisma.partner.findFirst({
+      where: {
+        categoryId: data.categoryId,
+        name: data.name,
+        discount: data.discount,
+      },
+    });
 
-      return {
-        success: true,
-        message: 'Partners fetched successfully',
-        data: partners,
-      };
-    } catch (error) {
-      throw new InternalServerErrorException('Failed to fetch partners');
+    if (existingPartner) {
+        throw new NotFoundException('A partner with the same name and discount already exists in this category');
     }
+    const partner = await this.prisma.partner.create({
+      data: {
+        name: data.name,
+        discount: data.discount,
+        category: {
+          connect: { id: data.categoryId },
+        },
+      },
+    });
+
+    return {
+      success: true,
+      message: 'Partner created and added to category successfully',
+      data: partner,
+    };
+  } catch (error) {
+    if (error instanceof NotFoundException) throw error;
+    throw new InternalServerErrorException('Failed to create partner');
   }
+}
 
-  async findOne(id: string) {
-    try {
-      const partner = await this.prisma.partner.findUnique({
-        where: { id },
-        include: { category: true },
-      });
 
-      if (!partner) {
-        throw new NotFoundException('Partner not found');
-      }
-
-      return {
-        success: true,
-        message: 'Partner fetched successfully',
-        data: partner,
-      };
-    } catch (error) {
-      if (error instanceof NotFoundException) throw error;
-      throw new InternalServerErrorException('Failed to fetch partner');
-    }
-  }
-
+  // Only delete
   async delete(id: string) {
     try {
       const partner = await this.prisma.partner.delete({
@@ -71,11 +65,7 @@ export class PartnerService {
         data: partner,
       };
     } catch (error) {
-      if (error.code === 'P2025') {
-        // Prisma record not found
-        throw new NotFoundException('Partner not found');
-      }
-
+      if (error.code === 'P2025') throw new NotFoundException('Partner not found');
       throw new InternalServerErrorException('Failed to delete partner');
     }
   }

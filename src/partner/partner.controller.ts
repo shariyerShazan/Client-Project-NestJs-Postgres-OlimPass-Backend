@@ -12,15 +12,15 @@ export class PartnerController {
     return this.service.create(dto);
   }
 
-  @Get()
-  async findAll() {
-    return this.service.findAll();
-  }
+//   @Get()
+//   async findAll() {
+//     return this.service.findAll();
+//   }
 
-  @Get(':id')
-  async findOne(@Param('id') id: string) {
-    return this.service.findOne(id);
-  }
+//   @Get(':id')
+//   async findOne(@Param('id') id: string) {
+//     return this.service.findOne(id);
+//   }
 
   @Delete(':id')
   async remove(@Param('id') id: string) {
