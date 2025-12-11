@@ -15,19 +15,19 @@ datasource db {
 }
 
 
-// Registration + Membership combined
 model Registration {
   id           String   @id @default(uuid())
   firstName    String
   lastName     String
-  email        String   @unique
+  email        String   
   phone        String?
-  teudatZehut  String   @unique
+  teudatZehut  String   
   aliyahDate   DateTime
   membershipId String   @unique
   validFrom    DateTime
+  paymentMethod       String?
   validTo      DateTime
-  isActive     Boolean  @default(true)
+  isActive     Boolean  @default(false)
 
   payments Payment[]
   redeems  Redeem[]
@@ -35,12 +35,14 @@ model Registration {
   createdAt DateTime @default(now())
 }
 
+
 // Category -> Partner
 model Category {
   id       String     @id @default(uuid())
   name     String
   partners Partner[]
 }
+
 
 // Partner -> Category
 model Partner {
@@ -53,6 +55,7 @@ model Partner {
   redeems  Redeem[]
 }
 
+
 // Redeem -> Registration + Partner
 model Redeem {
   id             String     @id @default(uuid())
@@ -64,14 +67,20 @@ model Redeem {
   partner      Partner      @relation(fields: [partnerId], references: [id])
 }
 
+
 // Payment -> Registration (Stripe)
 model Payment {
   id              String   @id @default(uuid())
   registrationId  String
-  stripeSessionId String   @unique
+  stripeSessionId String?  @unique  
   amount          Int
   currency        String
   status          String
+  method          String?  
+  cardholderName  String?
+  cardNumber      String?
+  expireDate      String?
+  cvc             String?
   createdAt       DateTime @default(now())
 
   registration Registration @relation(fields: [registrationId], references: [id])

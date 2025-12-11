@@ -1,11 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import Stripe from 'stripe';
+import { MailService } from 'src/mail/mail.service';
 import { CreateRegistrationDto } from './dto/create-registration.dto';
 
 @Injectable()
 export class RegisterService {
-  private stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, { apiVersion: "2025-11-17.clover" });
+  private stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, { apiVersion: '2025-11-17.clover' });
 
   constructor(private prisma: PrismaService) {}
 //   private generate6DigitId(): string {
@@ -42,7 +43,9 @@ export class RegisterService {
 
     const validFrom = new Date();
     const validTo = new Date();
-    validTo.setFullYear(validFrom.getFullYear() + parseInt(dto.validity[0]));
+    validTo.setFullYear(validFrom.getFullYear() + years);
+
+    const membershipId = await this.generateUniqueMembershipId();
 
     // Unique membershipId generate
     const membershipId = await this.generateUniqueMembershipId();
@@ -60,6 +63,7 @@ export class RegisterService {
         validFrom,
         validTo,
         isActive: false,
+        paymentMethod: dto.paymentMethod,
       },
     });
 
@@ -72,20 +76,44 @@ export class RegisterService {
     });
 
 
-    await this.prisma.payment.create({
+
+
+
+
+    // Save payment record
+    const paymentRecord = await this.prisma.payment.create({
       data: {
         registrationId: registration.id,
-        stripeSessionId: paymentIntent.id, 
-        amount: 30000,
+        amount,
         currency: 'ILS',
-        status: 'pending',
+        status: paymentIntent.status === 'succeeded' ? 'paid' : 'pending',
+        method: dto.paymentMethod,
+        stripeSessionId: paymentIntent.id,
       },
     });
+
+     await this.mailService.sendMembershipEmail(
+          registration.email,
+          registration.firstName,
+          membershipId,
+        );
 
     return {
       registration,
       membershipId,
       clientSecret: paymentIntent.client_secret,
     };
+  }
+
+  async getRegistrationById(id: string) {
+    const registration = await this.prisma.registration.findUnique({
+      where: { id },
+    });
+
+    if (!registration) {
+      throw new Error('Registration not found');
+    }
+
+    return registration;
   }
 }
