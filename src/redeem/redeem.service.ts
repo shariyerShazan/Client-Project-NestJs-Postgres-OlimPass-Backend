@@ -1,3 +1,4 @@
+import { RedeemMailService } from './../mail/redeem.mail.service';
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { addMinutes, addDays, isAfter, isBefore } from 'date-fns';
@@ -5,7 +6,7 @@ import { OtpMailService } from 'src/mail/otp.mail.service';
 
 @Injectable()
 export class RedeemService {
-  constructor(private prisma: PrismaService , private otpMailService : OtpMailService) {}
+  constructor(private prisma: PrismaService , private otpMailService : OtpMailService , private redeemMailService: RedeemMailService) {}
 
   private generateOtp(): string {
     return Math.floor(100000 + Math.random() * 900000).toString();
@@ -131,6 +132,14 @@ export class RedeemService {
     },
   });
 
+   await this.redeemMailService.sendRedeemEmail(
+    redeem.registration.email,
+    {
+      registration: redeem.registration,
+      partner: redeem.partner,
+      redeemedAt: redeem.redeemedAt,
+    }
+  );
  return {
     success: true,
     message: 'Redeemed successfully',
