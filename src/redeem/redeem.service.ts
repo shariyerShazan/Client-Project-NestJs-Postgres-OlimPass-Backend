@@ -1,55 +1,157 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
+import { addMinutes, addDays, isAfter, isBefore } from 'date-fns';
+import { OtpMailService } from 'src/mail/otp.mail.service';
 
 @Injectable()
 export class RedeemService {
-  constructor(private prisma: PrismaService) {}
+  constructor(private prisma: PrismaService , private otpMailService : OtpMailService) {}
 
-  async getCategoriesWithPartners() {
-    return this.prisma.category.findMany({
-      include: { partners: true },
-    });
+  private generateOtp(): string {
+    return Math.floor(100000 + Math.random() * 900000).toString();
   }
-  
-  async redeemDiscount(membershipId: string, partnerId: string) {
 
-      const registration = await this.prisma.registration.findUnique({
-        where: { membershipId },
+  async sendOtp(membershipId: string) {
+    const registration = await this.prisma.registration.findUnique({
+      where: { membershipId },
+    });
+
+    if (!registration) {
+      throw new BadRequestException('Membership not found');
+    }
+
+    if (!registration.isActive) {
+      throw new BadRequestException('Membership inactive');
+    }
+
+    const now = new Date();
+    if (registration.validTo < now) {
+      await this.prisma.registration.update({
+        where: { id: registration.id },
+        data: { isActive: false },
       });
 
-      if (!registration) throw new Error('Membership not found');
+      throw new BadRequestException('Membership expired');
+    }
 
-      if (!registration.isActive) {
-        throw new Error('Membership is inactive. Please register again.');
+    let otpWindowStart = registration.otpWindowStart || now;
+    let attemptCount = registration.otpAttemptCount;
+
+    const windowEnd = addDays(otpWindowStart, 7);
+
+    if (isBefore(now, windowEnd)) {
+      if (attemptCount >= 3) {
+        throw new BadRequestException(
+          'OTP attempt limit reached. Try again after 7 days.',
+        );
       }
+    } else {
+      otpWindowStart = now;
+      attemptCount = 0;
+    }
 
-        const today = new Date();
+    const otp = this.generateOtp();
 
-        if (registration.validTo < today) {
-          await this.prisma.registration.update({
-            where: { id: registration.id },
-            data: { isActive: false },
-          });
+    await this.prisma.registration.update({
+      where: { id: registration.id },
+      data: {
+        otp,
+        otpExpiresAt: addMinutes(now, 5),
+        otpAttemptCount: attemptCount + 1,
+        otpWindowStart,
+      },
+    });
 
-          throw new Error('Membership expired. Please register again.');
-        }
+    await this.otpMailService.sendOtpEmail(
+        registration.email,
+        registration.firstName+' '+registration.lastName,
+        otp
+      );
 
-      const partner = await this.prisma.partner.findUnique({ where: { id: partnerId } });
-      if (!partner) throw new Error('Partner not found');
 
-      const alreadyRedeemed = await this.prisma.redeem.findFirst({
-        where: {
-          registrationId: registration.id,
-          partnerId: partner.id,
-        },
-      });
-      if (alreadyRedeemed) throw new Error('Discount already redeemed for this partner');
+    return { success: true, message: 'OTP sent' };
+  }
 
-      return this.prisma.redeem.create({
-        data: {
-          registrationId: registration.id,
-          partnerId: partner.id,
-        },
-      });
+  async redeem(membershipId: string, otp: string, partnerId: string) {
+    const registration = await this.prisma.registration.findUnique({
+      where: { membershipId },
+    });
+
+    if (!registration) {
+      throw new BadRequestException('Membership not found');
+    }
+
+    if (!registration.otp || registration.otp !== otp) {
+      throw new BadRequestException('Invalid OTP');
+    }
+
+    if (!registration.otpExpiresAt || isAfter(new Date(), registration.otpExpiresAt)) {
+      throw new BadRequestException('OTP expired');
+    }
+
+    const partner = await this.prisma.partner.findUnique({
+      where: { id: partnerId },
+    });
+
+    if (!partner) {
+      throw new BadRequestException('Partner not found');
+    }
+
+    const alreadyRedeemed = await this.prisma.redeem.findFirst({
+      where: {
+        registrationId: registration.id,
+        partnerId,
+      },
+    });
+
+    if (alreadyRedeemed) {
+      throw new BadRequestException('Discount already redeemed');
+    }
+
+    await this.prisma.registration.update({
+      where: { id: registration.id },
+      data: {
+        otp: null,
+        otpExpiresAt: null,
+        otpAttemptCount: 0,
+        otpWindowStart: null,
+      },
+    });
+
+   const redeem = await this.prisma.redeem.create({
+    data: {
+      registrationId: registration.id,
+      partnerId,
+    },
+    include: {
+      registration: true,
+      partner: {
+        include: { category: true },
+      },
+    },
+  });
+
+ return {
+    success: true,
+    message: 'Redeemed successfully',
+    redeem: {
+      id: redeem.id,
+      redeemedAt: redeem.redeemedAt,
+      registration: {
+        firstName: redeem.registration.firstName,
+        lastName: redeem.registration.lastName,
+        email: redeem.registration.email,
+        phone: redeem.registration.phone,
+        teudatZehut: redeem.registration.teudatZehut,
+        aliyahDate: redeem.registration.aliyahDate,
+        membershipId: redeem.registration.membershipId,
+      },
+      partner: {
+        name: redeem.partner.name,
+        discount: redeem.partner.discount,
+        // category: redeem.partner.category.name,
+      },
+    },
+  };
   }
 }

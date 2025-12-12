@@ -20,8 +20,18 @@ export type RegistrationModel = runtime.Types.Result.DefaultSelection<Prisma.$Re
 
 export type AggregateRegistration = {
   _count: RegistrationCountAggregateOutputType | null
+  _avg: RegistrationAvgAggregateOutputType | null
+  _sum: RegistrationSumAggregateOutputType | null
   _min: RegistrationMinAggregateOutputType | null
   _max: RegistrationMaxAggregateOutputType | null
+}
+
+export type RegistrationAvgAggregateOutputType = {
+  otpAttemptCount: number | null
+}
+
+export type RegistrationSumAggregateOutputType = {
+  otpAttemptCount: number | null
 }
 
 export type RegistrationMinAggregateOutputType = {
@@ -37,6 +47,10 @@ export type RegistrationMinAggregateOutputType = {
   paymentMethod: string | null
   validTo: Date | null
   isActive: boolean | null
+  otp: string | null
+  otpExpiresAt: Date | null
+  otpAttemptCount: number | null
+  otpWindowStart: Date | null
   createdAt: Date | null
 }
 
@@ -53,6 +67,10 @@ export type RegistrationMaxAggregateOutputType = {
   paymentMethod: string | null
   validTo: Date | null
   isActive: boolean | null
+  otp: string | null
+  otpExpiresAt: Date | null
+  otpAttemptCount: number | null
+  otpWindowStart: Date | null
   createdAt: Date | null
 }
 
@@ -69,10 +87,22 @@ export type RegistrationCountAggregateOutputType = {
   paymentMethod: number
   validTo: number
   isActive: number
+  otp: number
+  otpExpiresAt: number
+  otpAttemptCount: number
+  otpWindowStart: number
   createdAt: number
   _all: number
 }
 
+
+export type RegistrationAvgAggregateInputType = {
+  otpAttemptCount?: true
+}
+
+export type RegistrationSumAggregateInputType = {
+  otpAttemptCount?: true
+}
 
 export type RegistrationMinAggregateInputType = {
   id?: true
@@ -87,6 +117,10 @@ export type RegistrationMinAggregateInputType = {
   paymentMethod?: true
   validTo?: true
   isActive?: true
+  otp?: true
+  otpExpiresAt?: true
+  otpAttemptCount?: true
+  otpWindowStart?: true
   createdAt?: true
 }
 
@@ -103,6 +137,10 @@ export type RegistrationMaxAggregateInputType = {
   paymentMethod?: true
   validTo?: true
   isActive?: true
+  otp?: true
+  otpExpiresAt?: true
+  otpAttemptCount?: true
+  otpWindowStart?: true
   createdAt?: true
 }
 
@@ -119,6 +157,10 @@ export type RegistrationCountAggregateInputType = {
   paymentMethod?: true
   validTo?: true
   isActive?: true
+  otp?: true
+  otpExpiresAt?: true
+  otpAttemptCount?: true
+  otpWindowStart?: true
   createdAt?: true
   _all?: true
 }
@@ -161,6 +203,18 @@ export type RegistrationAggregateArgs<ExtArgs extends runtime.Types.Extensions.I
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
    * 
+   * Select which fields to average
+  **/
+  _avg?: RegistrationAvgAggregateInputType
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+   * 
+   * Select which fields to sum
+  **/
+  _sum?: RegistrationSumAggregateInputType
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+   * 
    * Select which fields to find the minimum value
   **/
   _min?: RegistrationMinAggregateInputType
@@ -191,6 +245,8 @@ export type RegistrationGroupByArgs<ExtArgs extends runtime.Types.Extensions.Int
   take?: number
   skip?: number
   _count?: RegistrationCountAggregateInputType | true
+  _avg?: RegistrationAvgAggregateInputType
+  _sum?: RegistrationSumAggregateInputType
   _min?: RegistrationMinAggregateInputType
   _max?: RegistrationMaxAggregateInputType
 }
@@ -208,8 +264,14 @@ export type RegistrationGroupByOutputType = {
   paymentMethod: string | null
   validTo: Date
   isActive: boolean
+  otp: string | null
+  otpExpiresAt: Date | null
+  otpAttemptCount: number
+  otpWindowStart: Date | null
   createdAt: Date
   _count: RegistrationCountAggregateOutputType | null
+  _avg: RegistrationAvgAggregateOutputType | null
+  _sum: RegistrationSumAggregateOutputType | null
   _min: RegistrationMinAggregateOutputType | null
   _max: RegistrationMaxAggregateOutputType | null
 }
@@ -245,6 +307,10 @@ export type RegistrationWhereInput = {
   paymentMethod?: Prisma.StringNullableFilter<"Registration"> | string | null
   validTo?: Prisma.DateTimeFilter<"Registration"> | Date | string
   isActive?: Prisma.BoolFilter<"Registration"> | boolean
+  otp?: Prisma.StringNullableFilter<"Registration"> | string | null
+  otpExpiresAt?: Prisma.DateTimeNullableFilter<"Registration"> | Date | string | null
+  otpAttemptCount?: Prisma.IntFilter<"Registration"> | number
+  otpWindowStart?: Prisma.DateTimeNullableFilter<"Registration"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"Registration"> | Date | string
   payments?: Prisma.PaymentListRelationFilter
   redeems?: Prisma.RedeemListRelationFilter
@@ -263,6 +329,10 @@ export type RegistrationOrderByWithRelationInput = {
   paymentMethod?: Prisma.SortOrderInput | Prisma.SortOrder
   validTo?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
+  otp?: Prisma.SortOrderInput | Prisma.SortOrder
+  otpExpiresAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  otpAttemptCount?: Prisma.SortOrder
+  otpWindowStart?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   payments?: Prisma.PaymentOrderByRelationAggregateInput
   redeems?: Prisma.RedeemOrderByRelationAggregateInput
@@ -284,6 +354,10 @@ export type RegistrationWhereUniqueInput = Prisma.AtLeast<{
   paymentMethod?: Prisma.StringNullableFilter<"Registration"> | string | null
   validTo?: Prisma.DateTimeFilter<"Registration"> | Date | string
   isActive?: Prisma.BoolFilter<"Registration"> | boolean
+  otp?: Prisma.StringNullableFilter<"Registration"> | string | null
+  otpExpiresAt?: Prisma.DateTimeNullableFilter<"Registration"> | Date | string | null
+  otpAttemptCount?: Prisma.IntFilter<"Registration"> | number
+  otpWindowStart?: Prisma.DateTimeNullableFilter<"Registration"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"Registration"> | Date | string
   payments?: Prisma.PaymentListRelationFilter
   redeems?: Prisma.RedeemListRelationFilter
@@ -302,10 +376,16 @@ export type RegistrationOrderByWithAggregationInput = {
   paymentMethod?: Prisma.SortOrderInput | Prisma.SortOrder
   validTo?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
+  otp?: Prisma.SortOrderInput | Prisma.SortOrder
+  otpExpiresAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  otpAttemptCount?: Prisma.SortOrder
+  otpWindowStart?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   _count?: Prisma.RegistrationCountOrderByAggregateInput
+  _avg?: Prisma.RegistrationAvgOrderByAggregateInput
   _max?: Prisma.RegistrationMaxOrderByAggregateInput
   _min?: Prisma.RegistrationMinOrderByAggregateInput
+  _sum?: Prisma.RegistrationSumOrderByAggregateInput
 }
 
 export type RegistrationScalarWhereWithAggregatesInput = {
@@ -324,6 +404,10 @@ export type RegistrationScalarWhereWithAggregatesInput = {
   paymentMethod?: Prisma.StringNullableWithAggregatesFilter<"Registration"> | string | null
   validTo?: Prisma.DateTimeWithAggregatesFilter<"Registration"> | Date | string
   isActive?: Prisma.BoolWithAggregatesFilter<"Registration"> | boolean
+  otp?: Prisma.StringNullableWithAggregatesFilter<"Registration"> | string | null
+  otpExpiresAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Registration"> | Date | string | null
+  otpAttemptCount?: Prisma.IntWithAggregatesFilter<"Registration"> | number
+  otpWindowStart?: Prisma.DateTimeNullableWithAggregatesFilter<"Registration"> | Date | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Registration"> | Date | string
 }
 
@@ -340,6 +424,10 @@ export type RegistrationCreateInput = {
   paymentMethod?: string | null
   validTo: Date | string
   isActive?: boolean
+  otp?: string | null
+  otpExpiresAt?: Date | string | null
+  otpAttemptCount?: number
+  otpWindowStart?: Date | string | null
   createdAt?: Date | string
   payments?: Prisma.PaymentCreateNestedManyWithoutRegistrationInput
   redeems?: Prisma.RedeemCreateNestedManyWithoutRegistrationInput
@@ -358,6 +446,10 @@ export type RegistrationUncheckedCreateInput = {
   paymentMethod?: string | null
   validTo: Date | string
   isActive?: boolean
+  otp?: string | null
+  otpExpiresAt?: Date | string | null
+  otpAttemptCount?: number
+  otpWindowStart?: Date | string | null
   createdAt?: Date | string
   payments?: Prisma.PaymentUncheckedCreateNestedManyWithoutRegistrationInput
   redeems?: Prisma.RedeemUncheckedCreateNestedManyWithoutRegistrationInput
@@ -376,6 +468,10 @@ export type RegistrationUpdateInput = {
   paymentMethod?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   validTo?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  otp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  otpExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  otpAttemptCount?: Prisma.IntFieldUpdateOperationsInput | number
+  otpWindowStart?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   payments?: Prisma.PaymentUpdateManyWithoutRegistrationNestedInput
   redeems?: Prisma.RedeemUpdateManyWithoutRegistrationNestedInput
@@ -394,6 +490,10 @@ export type RegistrationUncheckedUpdateInput = {
   paymentMethod?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   validTo?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  otp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  otpExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  otpAttemptCount?: Prisma.IntFieldUpdateOperationsInput | number
+  otpWindowStart?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   payments?: Prisma.PaymentUncheckedUpdateManyWithoutRegistrationNestedInput
   redeems?: Prisma.RedeemUncheckedUpdateManyWithoutRegistrationNestedInput
@@ -412,6 +512,10 @@ export type RegistrationCreateManyInput = {
   paymentMethod?: string | null
   validTo: Date | string
   isActive?: boolean
+  otp?: string | null
+  otpExpiresAt?: Date | string | null
+  otpAttemptCount?: number
+  otpWindowStart?: Date | string | null
   createdAt?: Date | string
 }
 
@@ -428,6 +532,10 @@ export type RegistrationUpdateManyMutationInput = {
   paymentMethod?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   validTo?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  otp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  otpExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  otpAttemptCount?: Prisma.IntFieldUpdateOperationsInput | number
+  otpWindowStart?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -444,6 +552,10 @@ export type RegistrationUncheckedUpdateManyInput = {
   paymentMethod?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   validTo?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  otp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  otpExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  otpAttemptCount?: Prisma.IntFieldUpdateOperationsInput | number
+  otpWindowStart?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -460,7 +572,15 @@ export type RegistrationCountOrderByAggregateInput = {
   paymentMethod?: Prisma.SortOrder
   validTo?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
+  otp?: Prisma.SortOrder
+  otpExpiresAt?: Prisma.SortOrder
+  otpAttemptCount?: Prisma.SortOrder
+  otpWindowStart?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
+}
+
+export type RegistrationAvgOrderByAggregateInput = {
+  otpAttemptCount?: Prisma.SortOrder
 }
 
 export type RegistrationMaxOrderByAggregateInput = {
@@ -476,6 +596,10 @@ export type RegistrationMaxOrderByAggregateInput = {
   paymentMethod?: Prisma.SortOrder
   validTo?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
+  otp?: Prisma.SortOrder
+  otpExpiresAt?: Prisma.SortOrder
+  otpAttemptCount?: Prisma.SortOrder
+  otpWindowStart?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
 
@@ -492,7 +616,15 @@ export type RegistrationMinOrderByAggregateInput = {
   paymentMethod?: Prisma.SortOrder
   validTo?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
+  otp?: Prisma.SortOrder
+  otpExpiresAt?: Prisma.SortOrder
+  otpAttemptCount?: Prisma.SortOrder
+  otpWindowStart?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
+}
+
+export type RegistrationSumOrderByAggregateInput = {
+  otpAttemptCount?: Prisma.SortOrder
 }
 
 export type RegistrationScalarRelationFilter = {
@@ -514,6 +646,18 @@ export type DateTimeFieldUpdateOperationsInput = {
 
 export type BoolFieldUpdateOperationsInput = {
   set?: boolean
+}
+
+export type NullableDateTimeFieldUpdateOperationsInput = {
+  set?: Date | string | null
+}
+
+export type IntFieldUpdateOperationsInput = {
+  set?: number
+  increment?: number
+  decrement?: number
+  multiply?: number
+  divide?: number
 }
 
 export type RegistrationCreateNestedOneWithoutRedeemsInput = {
@@ -557,6 +701,10 @@ export type RegistrationCreateWithoutRedeemsInput = {
   paymentMethod?: string | null
   validTo: Date | string
   isActive?: boolean
+  otp?: string | null
+  otpExpiresAt?: Date | string | null
+  otpAttemptCount?: number
+  otpWindowStart?: Date | string | null
   createdAt?: Date | string
   payments?: Prisma.PaymentCreateNestedManyWithoutRegistrationInput
 }
@@ -574,6 +722,10 @@ export type RegistrationUncheckedCreateWithoutRedeemsInput = {
   paymentMethod?: string | null
   validTo: Date | string
   isActive?: boolean
+  otp?: string | null
+  otpExpiresAt?: Date | string | null
+  otpAttemptCount?: number
+  otpWindowStart?: Date | string | null
   createdAt?: Date | string
   payments?: Prisma.PaymentUncheckedCreateNestedManyWithoutRegistrationInput
 }
@@ -607,6 +759,10 @@ export type RegistrationUpdateWithoutRedeemsInput = {
   paymentMethod?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   validTo?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  otp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  otpExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  otpAttemptCount?: Prisma.IntFieldUpdateOperationsInput | number
+  otpWindowStart?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   payments?: Prisma.PaymentUpdateManyWithoutRegistrationNestedInput
 }
@@ -624,6 +780,10 @@ export type RegistrationUncheckedUpdateWithoutRedeemsInput = {
   paymentMethod?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   validTo?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  otp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  otpExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  otpAttemptCount?: Prisma.IntFieldUpdateOperationsInput | number
+  otpWindowStart?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   payments?: Prisma.PaymentUncheckedUpdateManyWithoutRegistrationNestedInput
 }
@@ -641,6 +801,10 @@ export type RegistrationCreateWithoutPaymentsInput = {
   paymentMethod?: string | null
   validTo: Date | string
   isActive?: boolean
+  otp?: string | null
+  otpExpiresAt?: Date | string | null
+  otpAttemptCount?: number
+  otpWindowStart?: Date | string | null
   createdAt?: Date | string
   redeems?: Prisma.RedeemCreateNestedManyWithoutRegistrationInput
 }
@@ -658,6 +822,10 @@ export type RegistrationUncheckedCreateWithoutPaymentsInput = {
   paymentMethod?: string | null
   validTo: Date | string
   isActive?: boolean
+  otp?: string | null
+  otpExpiresAt?: Date | string | null
+  otpAttemptCount?: number
+  otpWindowStart?: Date | string | null
   createdAt?: Date | string
   redeems?: Prisma.RedeemUncheckedCreateNestedManyWithoutRegistrationInput
 }
@@ -691,6 +859,10 @@ export type RegistrationUpdateWithoutPaymentsInput = {
   paymentMethod?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   validTo?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  otp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  otpExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  otpAttemptCount?: Prisma.IntFieldUpdateOperationsInput | number
+  otpWindowStart?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   redeems?: Prisma.RedeemUpdateManyWithoutRegistrationNestedInput
 }
@@ -708,6 +880,10 @@ export type RegistrationUncheckedUpdateWithoutPaymentsInput = {
   paymentMethod?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   validTo?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  otp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  otpExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  otpAttemptCount?: Prisma.IntFieldUpdateOperationsInput | number
+  otpWindowStart?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   redeems?: Prisma.RedeemUncheckedUpdateManyWithoutRegistrationNestedInput
 }
@@ -765,6 +941,10 @@ export type RegistrationSelect<ExtArgs extends runtime.Types.Extensions.Internal
   paymentMethod?: boolean
   validTo?: boolean
   isActive?: boolean
+  otp?: boolean
+  otpExpiresAt?: boolean
+  otpAttemptCount?: boolean
+  otpWindowStart?: boolean
   createdAt?: boolean
   payments?: boolean | Prisma.Registration$paymentsArgs<ExtArgs>
   redeems?: boolean | Prisma.Registration$redeemsArgs<ExtArgs>
@@ -784,6 +964,10 @@ export type RegistrationSelectCreateManyAndReturn<ExtArgs extends runtime.Types.
   paymentMethod?: boolean
   validTo?: boolean
   isActive?: boolean
+  otp?: boolean
+  otpExpiresAt?: boolean
+  otpAttemptCount?: boolean
+  otpWindowStart?: boolean
   createdAt?: boolean
 }, ExtArgs["result"]["registration"]>
 
@@ -800,6 +984,10 @@ export type RegistrationSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.
   paymentMethod?: boolean
   validTo?: boolean
   isActive?: boolean
+  otp?: boolean
+  otpExpiresAt?: boolean
+  otpAttemptCount?: boolean
+  otpWindowStart?: boolean
   createdAt?: boolean
 }, ExtArgs["result"]["registration"]>
 
@@ -816,10 +1004,14 @@ export type RegistrationSelectScalar = {
   paymentMethod?: boolean
   validTo?: boolean
   isActive?: boolean
+  otp?: boolean
+  otpExpiresAt?: boolean
+  otpAttemptCount?: boolean
+  otpWindowStart?: boolean
   createdAt?: boolean
 }
 
-export type RegistrationOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "firstName" | "lastName" | "email" | "phone" | "teudatZehut" | "aliyahDate" | "membershipId" | "validFrom" | "paymentMethod" | "validTo" | "isActive" | "createdAt", ExtArgs["result"]["registration"]>
+export type RegistrationOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "firstName" | "lastName" | "email" | "phone" | "teudatZehut" | "aliyahDate" | "membershipId" | "validFrom" | "paymentMethod" | "validTo" | "isActive" | "otp" | "otpExpiresAt" | "otpAttemptCount" | "otpWindowStart" | "createdAt", ExtArgs["result"]["registration"]>
 export type RegistrationInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   payments?: boolean | Prisma.Registration$paymentsArgs<ExtArgs>
   redeems?: boolean | Prisma.Registration$redeemsArgs<ExtArgs>
@@ -847,6 +1039,10 @@ export type $RegistrationPayload<ExtArgs extends runtime.Types.Extensions.Intern
     paymentMethod: string | null
     validTo: Date
     isActive: boolean
+    otp: string | null
+    otpExpiresAt: Date | null
+    otpAttemptCount: number
+    otpWindowStart: Date | null
     createdAt: Date
   }, ExtArgs["result"]["registration"]>
   composites: {}
@@ -1285,6 +1481,10 @@ export interface RegistrationFieldRefs {
   readonly paymentMethod: Prisma.FieldRef<"Registration", 'String'>
   readonly validTo: Prisma.FieldRef<"Registration", 'DateTime'>
   readonly isActive: Prisma.FieldRef<"Registration", 'Boolean'>
+  readonly otp: Prisma.FieldRef<"Registration", 'String'>
+  readonly otpExpiresAt: Prisma.FieldRef<"Registration", 'DateTime'>
+  readonly otpAttemptCount: Prisma.FieldRef<"Registration", 'Int'>
+  readonly otpWindowStart: Prisma.FieldRef<"Registration", 'DateTime'>
   readonly createdAt: Prisma.FieldRef<"Registration", 'DateTime'>
 }
     

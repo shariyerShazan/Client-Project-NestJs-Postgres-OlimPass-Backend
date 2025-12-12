@@ -1,22 +1,20 @@
-import { Controller, Get, Post, Body, Query } from '@nestjs/common';
+import { Body, Controller, Post } from '@nestjs/common';
 import { RedeemService } from './redeem.service';
+import { SendOtpDto } from './dto/send-otp.dto';
+import { RedeemDto } from './dto/redeem-dto';
+
 
 @Controller('redeem')
 export class RedeemController {
-  constructor(private redeemService: RedeemService) {}
+  constructor(private readonly redeemService: RedeemService) {}
 
-  @Get('categories')
-  async getCategories() {
-    return this.redeemService.getCategoriesWithPartners();
+  @Post('send-otp')
+  sendOtp(@Body() dto: SendOtpDto) {
+    return this.redeemService.sendOtp(dto.membershipId);
   }
 
   @Post()
-  async redeem(@Body() body: { membershipId: string; partnerId: string }) {
-    const { membershipId, partnerId } = body;
-    const redeem = await this.redeemService.redeemDiscount(membershipId, partnerId);
-    return {
-      message: 'Discount redeemed successfully!',
-      redeem,
-    };
+  redeem(@Body() dto: RedeemDto) {
+    return this.redeemService.redeem(dto.membershipId, dto.otp, dto.partnerId);
   }
 }
