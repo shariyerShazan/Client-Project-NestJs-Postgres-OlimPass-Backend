@@ -87,6 +87,10 @@ export const RegistrationScalarFieldEnum = {
   paymentMethod: 'paymentMethod',
   validTo: 'validTo',
   isActive: 'isActive',
+  otp: 'otp',
+  otpExpiresAt: 'otpExpiresAt',
+  otpAttemptCount: 'otpAttemptCount',
+  otpWindowStart: 'otpWindowStart',
   createdAt: 'createdAt'
 } as const
 

@@ -557,14 +557,6 @@ export type PaymentUncheckedUpdateManyWithoutRegistrationNestedInput = {
   deleteMany?: Prisma.PaymentScalarWhereInput | Prisma.PaymentScalarWhereInput[]
 }
 
-export type IntFieldUpdateOperationsInput = {
-  set?: number
-  increment?: number
-  decrement?: number
-  multiply?: number
-  divide?: number
-}
-
 export type PaymentCreateWithoutRegistrationInput = {
   id?: string
   stripeSessionId?: string | null

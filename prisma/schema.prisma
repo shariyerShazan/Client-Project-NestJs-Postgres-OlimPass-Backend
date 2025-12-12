@@ -24,11 +24,19 @@ model Registration {
   phone        String?
   teudatZehut  String   
   aliyahDate   DateTime
+
+
   membershipId String   @unique
   validFrom    DateTime
   paymentMethod       String?
   validTo      DateTime
   isActive     Boolean  @default(false)
+
+
+  otp             String?
+  otpExpiresAt    DateTime?
+  otpAttemptCount Int       @default(0)
+  otpWindowStart  DateTime?
 
   payments Payment[]
   redeems  Redeem[]
@@ -59,14 +67,15 @@ model Partner {
 
 // Redeem -> Registration + Partner
 model Redeem {
-  id             String     @id @default(uuid())
+  id             String   @id @default(uuid())
   registrationId String
   partnerId      String
-  redeemedAt     DateTime   @default(now())
+  redeemedAt     DateTime @default(now())
 
-  registration Registration @relation(fields: [registrationId], references: [id])
-  partner      Partner      @relation(fields: [partnerId], references: [id])
+  registration   Registration @relation(fields: [registrationId], references: [id])
+  partner        Partner      @relation(fields: [partnerId], references: [id])
 }
+
 
 
 // Payment -> Registration (Stripe)

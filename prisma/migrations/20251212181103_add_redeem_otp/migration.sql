@@ -1,0 +1,13 @@
+-- AlterTable
+ALTER TABLE "Redeem" ADD COLUMN     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+ADD COLUMN     "otp" TEXT,
+ADD COLUMN     "otpAttemptCount" INTEGER NOT NULL DEFAULT 0,
+ADD COLUMN     "otpExpiresAt" TIMESTAMP(3),
+ADD COLUMN     "otpLastAttemptAt" TIMESTAMP(3),
+ADD COLUMN     "otpVerified" BOOLEAN NOT NULL DEFAULT false,
+ADD COLUMN     "otpWindowStart" TIMESTAMP(3),
+ALTER COLUMN "redeemedAt" DROP NOT NULL,
+ALTER COLUMN "redeemedAt" DROP DEFAULT;
+
+-- AlterTable
+ALTER TABLE "Registration" ALTER COLUMN "isActive" SET DEFAULT false;
