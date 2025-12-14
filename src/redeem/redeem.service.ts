@@ -41,7 +41,7 @@ export class RedeemService {
     const windowEnd = addDays(otpWindowStart, 7);
 
     if (isBefore(now, windowEnd)) {
-      if (attemptCount >= 10) {
+      if (attemptCount >= 5) {
         throw new BadRequestException(
           'OTP attempt limit reached. Try again after 7 days.',
         );
