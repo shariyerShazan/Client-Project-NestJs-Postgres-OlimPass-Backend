@@ -9,7 +9,7 @@ export class RedeemService {
   constructor(private prisma: PrismaService , private otpMailService : OtpMailService , private redeemMailService: RedeemMailService) {}
 
   private generateOtp(): string {
-    return Math.floor(100000 + Math.random() * 900000).toString();
+    return Math.floor(1000 + Math.random() * 9000).toString();
   }
 
   async sendOtp(membershipId: string) {
@@ -41,7 +41,7 @@ export class RedeemService {
     const windowEnd = addDays(otpWindowStart, 7);
 
     if (isBefore(now, windowEnd)) {
-      if (attemptCount >= 3) {
+      if (attemptCount >= 10) {
         throw new BadRequestException(
           'OTP attempt limit reached. Try again after 7 days.',
         );
@@ -142,7 +142,7 @@ export class RedeemService {
   );
  return {
     success: true,
-    message: 'Redeemed successfully',
+    message: 'Redeemed successfully! Check your email for details.',  
     redeem: {
       id: redeem.id,
       redeemedAt: redeem.redeemedAt,
