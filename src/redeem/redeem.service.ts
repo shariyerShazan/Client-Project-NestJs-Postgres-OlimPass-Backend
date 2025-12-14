@@ -29,7 +29,7 @@ export class RedeemService {
     if (registration.validTo < now) {
       await this.prisma.registration.update({
         where: { id: registration.id },
-        data: { isActive: false },
+        data: { isActive: false , membershipId: "" },
       });
 
       throw new BadRequestException('Membership expired');
