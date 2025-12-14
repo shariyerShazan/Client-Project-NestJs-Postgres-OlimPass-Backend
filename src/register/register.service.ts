@@ -9,7 +9,7 @@ export class RegisterService {
   private stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, { apiVersion: '2025-11-17.clover' });
 
   constructor(private prisma: PrismaService
-    // , private mailService: MailService
+    , private mailService: MailService
   ) {}
 
   private async generateUniqueMembershipId(): Promise<string> {
@@ -44,7 +44,13 @@ export class RegisterService {
     if (existing) {
       const today = new Date();
       if (existing.validTo > today) {
-        throw new Error('You are already registered. Your membership is still valid.');
+         await this.mailService.sendMembershipEmail(
+          existing.email,
+          existing.firstName,
+          existing.membershipId,
+        );
+        throw new Error('You are already registered. Your membership is still valid. And the membershipId have been sent to your email again.');
+        
       }
     }
 

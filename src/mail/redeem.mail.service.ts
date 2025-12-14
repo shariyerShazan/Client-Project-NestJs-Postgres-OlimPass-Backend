@@ -48,7 +48,7 @@ export class RedeemMailService {
               <p><strong>Phone:</strong> ${registration.phone}</p>
               <p><strong>Teudat Zehut:</strong> ${registration.teudatZehut}</p>
               <p><strong>Aliyah Date:</strong> ${new Date(registration.aliyahDate).toLocaleString('en-US', {
-                year: 'numeric', month: 'long', day: 'numeric', hour:'2-digit', minute:'2-digit'
+                year: 'numeric', month: 'long', day: 'numeric'
               })}</p>
 
              
