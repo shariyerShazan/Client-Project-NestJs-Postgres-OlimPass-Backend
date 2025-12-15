@@ -4,11 +4,17 @@ import {
   Post,
   Body,
   Res,
+  Get,
+  UseGuards,
+  Req,
 } from '@nestjs/common';
 import express from 'express';
 import { AuthService } from './auth.service';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
+import { AuthGuard } from '@nestjs/passport';
+// import { JwtAuthGuard, RolesGuard } from './guards/roles.guard';
+// import { Roles } from './decorators/roles.decorator';
 
 @Controller('auth')
 export class AuthController {
@@ -31,4 +37,6 @@ export class AuthController {
   logout(@Res({ passthrough: true }) res: express.Response) {
     return this.service.logout(res);
   }
+
+
 }

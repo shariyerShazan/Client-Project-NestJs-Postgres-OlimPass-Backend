@@ -17,16 +17,11 @@ export class PartnerController {
     return this.service.create(dto);
   }
 
-//   @Get()
-//   async findAll() {
-//     return this.service.findAll();
-//   }
 
-//   @Get(':id')
-//   async findOne(@Param('id') id: string) {
-//     return this.service.findOne(id);
-//   }
-
+  @Get()
+  async findAll() {
+    return this.service.findAll();
+  }
 
   @UseGuards(AuthGuard('jwt'), RolesGuard)
  @Roles('ADMIN')

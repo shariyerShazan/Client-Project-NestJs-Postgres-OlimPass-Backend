@@ -49,13 +49,13 @@ export class AuthService {
     });
 
     if (!user) {
-      throw new UnauthorizedException('Invalid credentials');
+      throw new UnauthorizedException('Email not found');
     }
 
     const match = await bcrypt.compare(dto.password, user.password);
 
     if (!match) {
-      throw new UnauthorizedException('Invalid credentials');
+      throw new UnauthorizedException('Password is incorrect');
     }
 
     const payload = {
@@ -66,22 +66,37 @@ export class AuthService {
 
     const token = await this.jwtService.signAsync(payload);
 
-    res.cookie('access_token', token, {
+    // Set cookie options depending on environment. For cross-site XHR requests
+    // browsers often require SameSite=None and Secure=true. In development we
+    // keep secure=false so cookies work over http on localhost.
+    const cookieOptions = {
       httpOnly: true,
-      secure: false, 
-      sameSite: 'lax',
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
       maxAge: 7 * 24 * 60 * 60 * 1000,
-    });
+    } as {
+      httpOnly: boolean;
+      secure: boolean;
+      sameSite: 'lax' | 'strict' | 'none';
+      maxAge: number;
+    };
+
+    res.cookie('access_token', token, cookieOptions);
 
     return {
         user,
       success: true,
-      message: 'Login successful',
+      message: 'Welcome Admin!!!',
     };
   }
 
   logout(res: any) {
-    res.clearCookie('access_token');
+    // Use same options when clearing to ensure cookie is removed
+    res.clearCookie('access_token', {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+    });
     return {
       success: true,
       message: 'Logged out successfully',

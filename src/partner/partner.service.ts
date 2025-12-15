@@ -69,4 +69,18 @@ async create(data: CreatePartnerDto) {
       throw new InternalServerErrorException('Failed to delete partner');
     }
   }
+
+
+    async findAll() {
+    const partners = await this.prisma.partner.findMany({
+      include: { category: true },
+      orderBy: { name: "asc" },
+    })
+
+    return {
+      success: true,
+      message: "Partners fetched successfully",
+      data: partners,
+    }
+  }
 }

@@ -1,4 +1,4 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, Get, Post, Query } from '@nestjs/common';
 import { RedeemService } from './redeem.service';
 import { SendOtpDto } from './dto/send-otp.dto';
 import { RedeemDto } from './dto/redeem-dto';
@@ -16,5 +16,17 @@ export class RedeemController {
   @Post()
   redeem(@Body() dto: RedeemDto) {
     return this.redeemService.redeem(dto.membershipId, dto.otp, dto.partnerId);
+  }
+
+ @Get()
+  async findAll(
+    @Query('page') page: string = '1',
+    @Query('limit') limit: string = '10'
+  ) {
+    const redeems = await this.redeemService.findAll(page, limit);
+    return {
+      success: true,
+      ...redeems,
+    };
   }
 }
