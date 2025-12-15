@@ -17,8 +17,8 @@ import type * as Prisma from "./prismaNamespace.js"
 
 const config: runtime.GetPrismaClientConfig = {
   "previewFeatures": [],
-  "clientVersion": "7.0.1",
-  "engineVersion": "f09f2815f091dbba658cdcd2264306d88bb5bda6",
+  "clientVersion": "7.1.0",
+  "engineVersion": "ab635e6b9d606fa5c8fb8b1a7f909c3c3c1c98ba",
   "activeProvider": "postgresql",
   "inlineSchema": "// This is your Prisma schema file,\n// learn more about it in the docs: https://pris.ly/d/prisma-schema\n\n// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?\n// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init\n\ngenerator client {\n  provider      = \"prisma-client\"\n  output        = \"./generated/prisma\"\n  moduleFormat  = \"cjs\"\n  binaryTargets = [\"native\"]\n}\n\ndatasource db {\n  provider = \"postgresql\"\n}\n\nmodel Registration {\n  id          String   @id @default(uuid())\n  firstName   String\n  lastName    String\n  email       String\n  phone       String?\n  teudatZehut String\n  aliyahDate  DateTime\n\n  membershipId  String   @unique\n  validFrom     DateTime\n  paymentMethod String?\n  validTo       DateTime\n  isActive      Boolean  @default(false)\n\n  otp             String?\n  otpExpiresAt    DateTime?\n  otpAttemptCount Int       @default(0)\n  otpWindowStart  DateTime?\n\n  payments Payment[]\n  redeems  Redeem[]\n\n  createdAt DateTime @default(now())\n}\n\n// Category -> Partner\nmodel Category {\n  id       String    @id @default(uuid())\n  name     String\n  partners Partner[]\n}\n\n// Partner -> Category\nmodel Partner {\n  id         String @id @default(uuid())\n  name       String\n  discount   String\n  categoryId String\n\n  category Category @relation(fields: [categoryId], references: [id])\n  redeems  Redeem[]\n}\n\n// Redeem -> Registration + Partner\nmodel Redeem {\n  id             String   @id @default(uuid())\n  registrationId String\n  partnerId      String\n  redeemedAt     DateTime @default(now())\n\n  registration Registration @relation(fields: [registrationId], references: [id])\n  partner      Partner      @relation(fields: [partnerId], references: [id])\n}\n\n// Payment -> Registration (Stripe)\nmodel Payment {\n  id              String   @id @default(uuid())\n  registrationId  String\n  stripeSessionId String?  @unique\n  amount          Int\n  currency        String\n  status          String\n  method          String?\n  cardholderName  String?\n  cardNumber      String?\n  expireDate      String?\n  cvc             String?\n  createdAt       DateTime @default(now())\n\n  registration Registration @relation(fields: [registrationId], references: [id])\n}\n",
   "runtimeDataModel": {
@@ -62,7 +62,7 @@ export interface PrismaClientConstructor {
    * const registrations = await prisma.registration.findMany()
    * ```
    * 
-   * Read more in our [docs](https://www.prisma.io/docs/reference/tools-and-interfaces/prisma-client).
+   * Read more in our [docs](https://pris.ly/d/client).
    */
 
   new <
@@ -84,7 +84,7 @@ export interface PrismaClientConstructor {
  * const registrations = await prisma.registration.findMany()
  * ```
  * 
- * Read more in our [docs](https://www.prisma.io/docs/reference/tools-and-interfaces/prisma-client).
+ * Read more in our [docs](https://pris.ly/d/client).
  */
 
 export interface PrismaClient<
@@ -113,7 +113,7 @@ export interface PrismaClient<
    * const result = await prisma.$executeRaw`UPDATE User SET cool = ${true} WHERE email = ${'user@email.com'};`
    * ```
    *
-   * Read more in our [docs](https://www.prisma.io/docs/reference/tools-and-interfaces/prisma-client/raw-database-access).
+   * Read more in our [docs](https://pris.ly/d/raw-queries).
    */
   $executeRaw<T = unknown>(query: TemplateStringsArray | Prisma.Sql, ...values: any[]): Prisma.PrismaPromise<number>;
 
@@ -125,7 +125,7 @@ export interface PrismaClient<
    * const result = await prisma.$executeRawUnsafe('UPDATE User SET cool = $1 WHERE email = $2 ;', true, 'user@email.com')
    * ```
    *
-   * Read more in our [docs](https://www.prisma.io/docs/reference/tools-and-interfaces/prisma-client/raw-database-access).
+   * Read more in our [docs](https://pris.ly/d/raw-queries).
    */
   $executeRawUnsafe<T = unknown>(query: string, ...values: any[]): Prisma.PrismaPromise<number>;
 
@@ -136,7 +136,7 @@ export interface PrismaClient<
    * const result = await prisma.$queryRaw`SELECT * FROM User WHERE id = ${1} OR email = ${'user@email.com'};`
    * ```
    *
-   * Read more in our [docs](https://www.prisma.io/docs/reference/tools-and-interfaces/prisma-client/raw-database-access).
+   * Read more in our [docs](https://pris.ly/d/raw-queries).
    */
   $queryRaw<T = unknown>(query: TemplateStringsArray | Prisma.Sql, ...values: any[]): Prisma.PrismaPromise<T>;
 
@@ -148,7 +148,7 @@ export interface PrismaClient<
    * const result = await prisma.$queryRawUnsafe('SELECT * FROM User WHERE id = $1 OR email = $2;', 1, 'user@email.com')
    * ```
    *
-   * Read more in our [docs](https://www.prisma.io/docs/reference/tools-and-interfaces/prisma-client/raw-database-access).
+   * Read more in our [docs](https://pris.ly/d/raw-queries).
    */
   $queryRawUnsafe<T = unknown>(query: string, ...values: any[]): Prisma.PrismaPromise<T>;
 

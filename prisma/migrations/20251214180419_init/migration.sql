@@ -11,7 +11,11 @@ CREATE TABLE "Registration" (
     "validFrom" TIMESTAMP(3) NOT NULL,
     "paymentMethod" TEXT,
     "validTo" TIMESTAMP(3) NOT NULL,
-    "isActive" BOOLEAN NOT NULL DEFAULT true,
+    "isActive" BOOLEAN NOT NULL DEFAULT false,
+    "otp" TEXT,
+    "otpExpiresAt" TIMESTAMP(3),
+    "otpAttemptCount" INTEGER NOT NULL DEFAULT 0,
+    "otpWindowStart" TIMESTAMP(3),
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT "Registration_pkey" PRIMARY KEY ("id")
