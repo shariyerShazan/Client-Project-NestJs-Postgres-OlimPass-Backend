@@ -51,6 +51,7 @@ export const AnyNull = runtime.AnyNull
 
 
 export const ModelName = {
+  Admin: 'Admin',
   Registration: 'Registration',
   Category: 'Category',
   Partner: 'Partner',
@@ -72,6 +73,17 @@ export const TransactionIsolationLevel = {
 } as const
 
 export type TransactionIsolationLevel = (typeof TransactionIsolationLevel)[keyof typeof TransactionIsolationLevel]
+
+
+export const AdminScalarFieldEnum = {
+  id: 'id',
+  email: 'email',
+  password: 'password',
+  role: 'role',
+  createdAt: 'createdAt'
+} as const
+
+export type AdminScalarFieldEnum = (typeof AdminScalarFieldEnum)[keyof typeof AdminScalarFieldEnum]
 
 
 export const RegistrationScalarFieldEnum = {

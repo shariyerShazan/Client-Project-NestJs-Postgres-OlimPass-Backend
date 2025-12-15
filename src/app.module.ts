@@ -15,6 +15,7 @@ import { CategoryService } from './category/category.service';
 import { CategoryModule } from './category/category.module';
 import { PartnerService } from './partner/partner.service';
 import { PartnerModule } from './partner/partner.module';
+import { AuthModule } from './auth/auth.module';
 
 
 
@@ -28,6 +29,7 @@ import { PartnerModule } from './partner/partner.module';
     ScheduleModule.forRoot(),
     CategoryModule,
     PartnerModule,
+    AuthModule,
   ],
   controllers: [AppController, WebhookController],
   providers: [AppService, PrismaService, RegisterService, MailService, ExpireRegisterService, CategoryService, PartnerService],

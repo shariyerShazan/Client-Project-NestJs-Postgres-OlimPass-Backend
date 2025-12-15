@@ -8,6 +8,7 @@
  *
  * 🟢 You can import this file directly.
  */
+export type * from './models/Admin.js'
 export type * from './models/Registration.js'
 export type * from './models/Category.js'
 export type * from './models/Partner.js'
