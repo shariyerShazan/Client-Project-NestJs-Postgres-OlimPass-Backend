@@ -1,4 +1,4 @@
-import { Body, Controller, Post, HttpException, HttpStatus, Get, Param } from '@nestjs/common';
+import { Body, Controller, Post, HttpException, HttpStatus, Get, Param, Query } from '@nestjs/common';
 import { RegisterService } from './register.service';
 import { CreateRegistrationDto } from './dto/create-registration.dto';
 
@@ -45,4 +45,28 @@ export class RegisterController {
       );
     }
   }
+
+@Get()
+async getAllRegistrations(
+  @Query('page') page = '1',
+  @Query('limit') limit = '10',
+  @Query('isActive') isActive?: string
+) {
+  try {
+    const activeFilter = isActive !== undefined ? isActive === 'true' : undefined
+    const registrations = await this.registerService.findAll(page, limit, activeFilter)
+    return {
+      success: true,
+      ...registrations, 
+    }
+  } catch (error) {
+    throw new HttpException(
+      {
+        success: false,
+        message: error.message || 'Failed to fetch registrations',
+      },
+      HttpStatus.BAD_REQUEST,
+    )
+  }
+}
 }

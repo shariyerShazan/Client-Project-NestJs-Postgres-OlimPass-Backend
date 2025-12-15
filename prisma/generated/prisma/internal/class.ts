@@ -17,10 +17,10 @@ import type * as Prisma from "./prismaNamespace.js"
 
 const config: runtime.GetPrismaClientConfig = {
   "previewFeatures": [],
-  "clientVersion": "7.0.1",
-  "engineVersion": "f09f2815f091dbba658cdcd2264306d88bb5bda6",
+  "clientVersion": "7.1.0",
+  "engineVersion": "ab635e6b9d606fa5c8fb8b1a7f909c3c3c1c98ba",
   "activeProvider": "postgresql",
-  "inlineSchema": "// This is your Prisma schema file,\n// learn more about it in the docs: https://pris.ly/d/prisma-schema\n\n// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?\n// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init\n\ngenerator client {\n  provider      = \"prisma-client\"\n  output        = \"./generated/prisma\"\n  moduleFormat  = \"cjs\"\n  binaryTargets = [\"native\"]\n}\n\ndatasource db {\n  provider = \"postgresql\"\n}\n\nmodel Registration {\n  id          String   @id @default(uuid())\n  firstName   String\n  lastName    String\n  email       String\n  phone       String?\n  teudatZehut String\n  aliyahDate  DateTime\n\n  membershipId  String   @unique\n  validFrom     DateTime\n  paymentMethod String?\n  validTo       DateTime\n  isActive      Boolean  @default(false)\n\n  otp             String?\n  otpExpiresAt    DateTime?\n  otpAttemptCount Int       @default(0)\n  otpWindowStart  DateTime?\n\n  payments Payment[]\n  redeems  Redeem[]\n\n  createdAt DateTime @default(now())\n}\n\n// Category -> Partner\nmodel Category {\n  id       String    @id @default(uuid())\n  name     String\n  partners Partner[]\n}\n\n// Partner -> Category\nmodel Partner {\n  id         String @id @default(uuid())\n  name       String\n  discount   String\n  categoryId String\n\n  category Category @relation(fields: [categoryId], references: [id])\n  redeems  Redeem[]\n}\n\n// Redeem -> Registration + Partner\nmodel Redeem {\n  id             String   @id @default(uuid())\n  registrationId String\n  partnerId      String\n  redeemedAt     DateTime @default(now())\n\n  registration Registration @relation(fields: [registrationId], references: [id])\n  partner      Partner      @relation(fields: [partnerId], references: [id])\n}\n\n// Payment -> Registration (Stripe)\nmodel Payment {\n  id              String   @id @default(uuid())\n  registrationId  String\n  stripeSessionId String?  @unique\n  amount          Int\n  currency        String\n  status          String\n  method          String?\n  cardholderName  String?\n  cardNumber      String?\n  expireDate      String?\n  cvc             String?\n  createdAt       DateTime @default(now())\n\n  registration Registration @relation(fields: [registrationId], references: [id])\n}\n",
+  "inlineSchema": "// This is your Prisma schema file,\n// learn more about it in the docs: https://pris.ly/d/prisma-schema\n\n// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?\n// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init\n\ngenerator client {\n  provider      = \"prisma-client\"\n  output        = \"./generated/prisma\"\n  moduleFormat  = \"cjs\"\n  binaryTargets = [\"native\"]\n}\n\ndatasource db {\n  provider = \"postgresql\"\n}\n\nenum Role {\n  USER\n  ADMIN\n}\n\nmodel Admin {\n  id       String @id @default(uuid())\n  email    String @unique\n  password String\n  role     Role   @default(USER)\n\n  createdAt DateTime @default(now())\n}\n\nmodel Registration {\n  id          String   @id @default(uuid())\n  firstName   String\n  lastName    String\n  email       String\n  phone       String?\n  teudatZehut String\n  aliyahDate  DateTime\n\n  membershipId  String   @unique\n  validFrom     DateTime\n  paymentMethod String?\n  validTo       DateTime\n  isActive      Boolean  @default(false)\n\n  otp             String?\n  otpExpiresAt    DateTime?\n  otpAttemptCount Int       @default(0)\n  otpWindowStart  DateTime?\n\n  payments Payment[]\n  redeems  Redeem[]\n\n  createdAt DateTime @default(now())\n}\n\n// Category -> Partner\nmodel Category {\n  id       String    @id @default(uuid())\n  name     String\n  partners Partner[]\n}\n\n// Partner -> Category\nmodel Partner {\n  id         String @id @default(uuid())\n  name       String\n  discount   String\n  categoryId String\n\n  category Category @relation(fields: [categoryId], references: [id])\n  redeems  Redeem[]\n}\n\n// Redeem -> Registration + Partner\nmodel Redeem {\n  id             String   @id @default(uuid())\n  registrationId String\n  partnerId      String\n  redeemedAt     DateTime @default(now())\n\n  registration Registration @relation(fields: [registrationId], references: [id])\n  partner      Partner      @relation(fields: [partnerId], references: [id])\n}\n\n// Payment -> Registration (Stripe)\nmodel Payment {\n  id              String   @id @default(uuid())\n  registrationId  String\n  stripeSessionId String?  @unique\n  amount          Int\n  currency        String\n  status          String\n  method          String?\n  cardholderName  String?\n  cardNumber      String?\n  expireDate      String?\n  cvc             String?\n  createdAt       DateTime @default(now())\n\n  registration Registration @relation(fields: [registrationId], references: [id])\n}\n",
   "runtimeDataModel": {
     "models": {},
     "enums": {},
@@ -28,7 +28,7 @@ const config: runtime.GetPrismaClientConfig = {
   }
 }
 
-config.runtimeDataModel = JSON.parse("{\"models\":{\"Registration\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"firstName\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"lastName\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"email\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"phone\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"teudatZehut\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"aliyahDate\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"membershipId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"validFrom\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"paymentMethod\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"validTo\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"isActive\",\"kind\":\"scalar\",\"type\":\"Boolean\"},{\"name\":\"otp\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"otpExpiresAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"otpAttemptCount\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"otpWindowStart\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"payments\",\"kind\":\"object\",\"type\":\"Payment\",\"relationName\":\"PaymentToRegistration\"},{\"name\":\"redeems\",\"kind\":\"object\",\"type\":\"Redeem\",\"relationName\":\"RedeemToRegistration\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"}],\"dbName\":null},\"Category\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"name\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"partners\",\"kind\":\"object\",\"type\":\"Partner\",\"relationName\":\"CategoryToPartner\"}],\"dbName\":null},\"Partner\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"name\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"discount\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"categoryId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"category\",\"kind\":\"object\",\"type\":\"Category\",\"relationName\":\"CategoryToPartner\"},{\"name\":\"redeems\",\"kind\":\"object\",\"type\":\"Redeem\",\"relationName\":\"PartnerToRedeem\"}],\"dbName\":null},\"Redeem\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"registrationId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"partnerId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"redeemedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"registration\",\"kind\":\"object\",\"type\":\"Registration\",\"relationName\":\"RedeemToRegistration\"},{\"name\":\"partner\",\"kind\":\"object\",\"type\":\"Partner\",\"relationName\":\"PartnerToRedeem\"}],\"dbName\":null},\"Payment\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"registrationId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"stripeSessionId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"amount\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"currency\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"status\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"method\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"cardholderName\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"cardNumber\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"expireDate\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"cvc\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"registration\",\"kind\":\"object\",\"type\":\"Registration\",\"relationName\":\"PaymentToRegistration\"}],\"dbName\":null}},\"enums\":{},\"types\":{}}")
+config.runtimeDataModel = JSON.parse("{\"models\":{\"Admin\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"email\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"password\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"role\",\"kind\":\"enum\",\"type\":\"Role\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"}],\"dbName\":null},\"Registration\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"firstName\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"lastName\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"email\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"phone\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"teudatZehut\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"aliyahDate\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"membershipId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"validFrom\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"paymentMethod\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"validTo\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"isActive\",\"kind\":\"scalar\",\"type\":\"Boolean\"},{\"name\":\"otp\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"otpExpiresAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"otpAttemptCount\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"otpWindowStart\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"payments\",\"kind\":\"object\",\"type\":\"Payment\",\"relationName\":\"PaymentToRegistration\"},{\"name\":\"redeems\",\"kind\":\"object\",\"type\":\"Redeem\",\"relationName\":\"RedeemToRegistration\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"}],\"dbName\":null},\"Category\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"name\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"partners\",\"kind\":\"object\",\"type\":\"Partner\",\"relationName\":\"CategoryToPartner\"}],\"dbName\":null},\"Partner\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"name\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"discount\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"categoryId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"category\",\"kind\":\"object\",\"type\":\"Category\",\"relationName\":\"CategoryToPartner\"},{\"name\":\"redeems\",\"kind\":\"object\",\"type\":\"Redeem\",\"relationName\":\"PartnerToRedeem\"}],\"dbName\":null},\"Redeem\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"registrationId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"partnerId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"redeemedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"registration\",\"kind\":\"object\",\"type\":\"Registration\",\"relationName\":\"RedeemToRegistration\"},{\"name\":\"partner\",\"kind\":\"object\",\"type\":\"Partner\",\"relationName\":\"PartnerToRedeem\"}],\"dbName\":null},\"Payment\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"registrationId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"stripeSessionId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"amount\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"currency\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"status\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"method\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"cardholderName\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"cardNumber\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"expireDate\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"cvc\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"registration\",\"kind\":\"object\",\"type\":\"Registration\",\"relationName\":\"PaymentToRegistration\"}],\"dbName\":null}},\"enums\":{},\"types\":{}}")
 
 async function decodeBase64AsWasm(wasmBase64: string): Promise<WebAssembly.Module> {
   const { Buffer } = await import('node:buffer')
@@ -58,11 +58,11 @@ export interface PrismaClientConstructor {
    * @example
    * ```
    * const prisma = new PrismaClient()
-   * // Fetch zero or more Registrations
-   * const registrations = await prisma.registration.findMany()
+   * // Fetch zero or more Admins
+   * const admins = await prisma.admin.findMany()
    * ```
    * 
-   * Read more in our [docs](https://www.prisma.io/docs/reference/tools-and-interfaces/prisma-client).
+   * Read more in our [docs](https://pris.ly/d/client).
    */
 
   new <
@@ -80,11 +80,11 @@ export interface PrismaClientConstructor {
  * @example
  * ```
  * const prisma = new PrismaClient()
- * // Fetch zero or more Registrations
- * const registrations = await prisma.registration.findMany()
+ * // Fetch zero or more Admins
+ * const admins = await prisma.admin.findMany()
  * ```
  * 
- * Read more in our [docs](https://www.prisma.io/docs/reference/tools-and-interfaces/prisma-client).
+ * Read more in our [docs](https://pris.ly/d/client).
  */
 
 export interface PrismaClient<
@@ -113,7 +113,7 @@ export interface PrismaClient<
    * const result = await prisma.$executeRaw`UPDATE User SET cool = ${true} WHERE email = ${'user@email.com'};`
    * ```
    *
-   * Read more in our [docs](https://www.prisma.io/docs/reference/tools-and-interfaces/prisma-client/raw-database-access).
+   * Read more in our [docs](https://pris.ly/d/raw-queries).
    */
   $executeRaw<T = unknown>(query: TemplateStringsArray | Prisma.Sql, ...values: any[]): Prisma.PrismaPromise<number>;
 
@@ -125,7 +125,7 @@ export interface PrismaClient<
    * const result = await prisma.$executeRawUnsafe('UPDATE User SET cool = $1 WHERE email = $2 ;', true, 'user@email.com')
    * ```
    *
-   * Read more in our [docs](https://www.prisma.io/docs/reference/tools-and-interfaces/prisma-client/raw-database-access).
+   * Read more in our [docs](https://pris.ly/d/raw-queries).
    */
   $executeRawUnsafe<T = unknown>(query: string, ...values: any[]): Prisma.PrismaPromise<number>;
 
@@ -136,7 +136,7 @@ export interface PrismaClient<
    * const result = await prisma.$queryRaw`SELECT * FROM User WHERE id = ${1} OR email = ${'user@email.com'};`
    * ```
    *
-   * Read more in our [docs](https://www.prisma.io/docs/reference/tools-and-interfaces/prisma-client/raw-database-access).
+   * Read more in our [docs](https://pris.ly/d/raw-queries).
    */
   $queryRaw<T = unknown>(query: TemplateStringsArray | Prisma.Sql, ...values: any[]): Prisma.PrismaPromise<T>;
 
@@ -148,7 +148,7 @@ export interface PrismaClient<
    * const result = await prisma.$queryRawUnsafe('SELECT * FROM User WHERE id = $1 OR email = $2;', 1, 'user@email.com')
    * ```
    *
-   * Read more in our [docs](https://www.prisma.io/docs/reference/tools-and-interfaces/prisma-client/raw-database-access).
+   * Read more in our [docs](https://pris.ly/d/raw-queries).
    */
   $queryRawUnsafe<T = unknown>(query: string, ...values: any[]): Prisma.PrismaPromise<T>;
 
@@ -175,6 +175,16 @@ export interface PrismaClient<
   }>>
 
       /**
+   * `prisma.admin`: Exposes CRUD operations for the **Admin** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more Admins
+    * const admins = await prisma.admin.findMany()
+    * ```
+    */
+  get admin(): Prisma.AdminDelegate<ExtArgs, { omit: OmitOpts }>;
+
+  /**
    * `prisma.registration`: Exposes CRUD operations for the **Registration** model.
     * Example usage:
     * ```ts

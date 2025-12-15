@@ -16,7 +16,7 @@ export class ExpireRegisterService {
         validTo: { lt: new Date() },
         isActive: true,            
       },
-      data: { isActive: false }, 
+      data: { isActive: false , membershipId: "" }, 
     });
 
     if (result.count > 0) {

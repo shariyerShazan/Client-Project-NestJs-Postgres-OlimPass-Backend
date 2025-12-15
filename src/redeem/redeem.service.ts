@@ -29,7 +29,7 @@ export class RedeemService {
     if (registration.validTo < now) {
       await this.prisma.registration.update({
         where: { id: registration.id },
-        data: { isActive: false },
+        data: { isActive: false , membershipId: "" },
       });
 
       throw new BadRequestException('Membership expired');
@@ -41,7 +41,7 @@ export class RedeemService {
     const windowEnd = addDays(otpWindowStart, 7);
 
     if (isBefore(now, windowEnd)) {
-      if (attemptCount >= 10) {
+      if (attemptCount >= 5) {
         throw new BadRequestException(
           'OTP attempt limit reached. Try again after 7 days.',
         );
@@ -163,4 +163,48 @@ export class RedeemService {
     },
   };
   }
+
+
+
+
+async findAll(page = "1", limit = "10") {
+  const pageNum = Number.parseInt(page, 10);
+  const limitNum = Number.parseInt(limit, 10);
+  const skip = (pageNum - 1) * limitNum;
+
+  return Promise.all([
+    this.prisma.redeem.findMany({
+      skip,
+      take: limitNum,
+      include: {
+        registration: {
+          select: {
+            firstName: true,
+            lastName: true,
+            email: true,
+            membershipId: true,
+          },
+        },
+        partner: {
+          include: {
+            category: {
+              select: {
+                name: true,
+              },
+            },
+          },
+        },
+      },
+      orderBy: { redeemedAt: "desc" },
+    }),
+    this.prisma.redeem.count(),
+  ]).then(([data, total]) => ({
+    data,
+    total,
+    page: pageNum,
+    limit: limitNum,
+    totalPages: Math.ceil(total / limitNum),
+  }));
+}
+
 }
