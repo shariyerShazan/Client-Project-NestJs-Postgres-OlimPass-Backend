@@ -141,4 +141,41 @@ const paymentIntent = await this.stripe.paymentIntents.create({
 
     return registration;
   }
+
+
+
+async findAll(
+  page = "1",
+  limit = "10",
+  isActive?: boolean // optional filter
+) {
+  const pageNum = Number.parseInt(page, 10)
+  const limitNum = Number.parseInt(limit, 10)
+  const skip = (pageNum - 1) * limitNum
+
+  // Build where clause dynamically
+  const where: any = {}
+  if (typeof isActive === "boolean") {
+    where.isActive = isActive
+  }
+
+  const [data, total] = await Promise.all([
+    this.prisma.registration.findMany({
+      skip,
+      take: limitNum,
+      where,
+      orderBy: { createdAt: "desc" },
+    }),
+    this.prisma.registration.count({ where }),
+  ])
+
+  return {
+    data,
+    total,
+    page: pageNum,
+    limit: limitNum,
+    totalPages: Math.ceil(total / limitNum),
+  }
+}
+
 }
