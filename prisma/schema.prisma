@@ -16,6 +16,23 @@ datasource db {
 }
 
 
+
+enum Role {
+  USER
+  ADMIN
+}
+
+model Admin {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  password  String
+  role      Role     @default(USER)
+
+  createdAt DateTime @default(now())
+}
+
+
+
 model Registration {
   id           String   @id @default(uuid())
   firstName    String
