@@ -28,6 +28,9 @@ model Admin {
   password  String
   role      Role     @default(USER)
 
+  resetToken       String?
+  resetTokenExpiry DateTime?
+
   createdAt DateTime @default(now())
 }
 
