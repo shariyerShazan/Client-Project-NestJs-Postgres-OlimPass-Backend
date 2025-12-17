@@ -34,6 +34,8 @@ async create(data: CreatePartnerDto) {
       data: {
         name: data.name,
         discount: data.discount,
+        maxRedeems: data.maxRedeems,
+        // remainingRedeems: data.maxRedeems,
         category: {
           connect: { id: data.categoryId },
         },

@@ -4,7 +4,7 @@ import {
   Post,
   Body,
   Res,
-  Get,
+  // Get,
   UseGuards,
   Req,
 } from '@nestjs/common';
@@ -13,6 +13,10 @@ import { AuthService } from './auth.service';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
 import { AuthGuard } from '@nestjs/passport';
+// import { ForgotPasswordDto } from './dto/forgot-password.dto';
+import { ResetPasswordDto } from './dto/reset-password.dto';
+import { RolesGuard } from './guards/roles.guard';
+import { Roles } from './decorators/roles.decorator';
 // import { JwtAuthGuard, RolesGuard } from './guards/roles.guard';
 // import { Roles } from './decorators/roles.decorator';
 
@@ -38,5 +42,15 @@ export class AuthController {
     return this.service.logout(res);
   }
 
+
+    @UseGuards(AuthGuard('jwt'), RolesGuard)
+   @Roles('ADMIN')
+  @Post('reset-password')
+  resetPassword(
+    @Req() req: any,
+    @Body() dto: ResetPasswordDto,
+  ) {
+    return this.service.resetPassword(req.user.id, dto);
+  }
 
 }

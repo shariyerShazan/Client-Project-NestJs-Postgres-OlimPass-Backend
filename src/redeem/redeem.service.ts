@@ -53,6 +53,7 @@ export class RedeemService {
 
     const otp = this.generateOtp();
 
+
     await this.prisma.registration.update({
       where: { id: registration.id },
       data: {
@@ -73,42 +74,31 @@ export class RedeemService {
     return { success: true, message: 'OTP sent' };
   }
 
-  async redeem(membershipId: string, otp: string, partnerId: string) {
-    const registration = await this.prisma.registration.findUnique({
-      where: { membershipId },
-    });
 
-    if (!registration) {
-      throw new BadRequestException('Membership not found');
-    }
 
-    if (!registration.otp || registration.otp !== otp) {
-      throw new BadRequestException('Invalid OTP');
-    }
 
-    if (!registration.otpExpiresAt || isAfter(new Date(), registration.otpExpiresAt)) {
-      throw new BadRequestException('OTP expired');
-    }
 
-    const partner = await this.prisma.partner.findUnique({
-      where: { id: partnerId },
-    });
+async redeem(membershipId: string, otp: string, partnerId: string) {
+  const registration = await this.prisma.registration.findUnique({
+    where: { membershipId },
+  });
 
-    if (!partner) {
-      throw new BadRequestException('Partner not found');
-    }
+  if (!registration) {
+    throw new BadRequestException('Membership not found');
+  }
 
-    const alreadyRedeemed = await this.prisma.redeem.findFirst({
-      where: {
-        registrationId: registration.id,
-        partnerId,
+  // OTP Validation
+  if (!registration.otp || registration.otp !== otp) {
+    await this.prisma.registration.update({
+      where: { id: registration.id },
+      data: {
+        otpAttemptCount: { increment: 1 },
       },
     });
+    throw new BadRequestException('Invalid OTP');
+  }
 
-    if (alreadyRedeemed) {
-      throw new BadRequestException('Discount already redeemed');
-    }
-
+  if (!registration.otpExpiresAt || isAfter(new Date(), registration.otpExpiresAt)) {
     await this.prisma.registration.update({
       where: { id: registration.id },
       data: {
@@ -118,33 +108,91 @@ export class RedeemService {
         otpWindowStart: null,
       },
     });
+    throw new BadRequestException('OTP expired');
+  }
 
-   const redeem = await this.prisma.redeem.create({
-    data: {
+  // Partner fetch
+  const partner = await this.prisma.partner.findUnique({
+    where: { id: partnerId },
+  });
+
+  if (!partner) {
+    throw new BadRequestException('Partner not found');
+  }
+
+  // Check existing redeem for this registration + partner
+  let redeem = await this.prisma.redeem.findFirst({
+    where: {
       registrationId: registration.id,
       partnerId,
     },
     include: {
       registration: true,
-      partner: {
-        include: { category: true },
-      },
+      partner: { include: { category: true } },
     },
   });
 
-   await this.redeemMailService.sendRedeemEmail(
+  if(!redeem && partner.maxRedeems < 1){
+    throw new BadRequestException(
+      'This partner has no redeems available',
+    );
+  }
+  
+  if (redeem) {
+    if (redeem.redeemCount >= partner.maxRedeems) {
+      throw new BadRequestException(
+        'You have reached the maximum redeem limit for this partner',
+      );
+    }
+    redeem = await this.prisma.redeem.update({
+      where: { id: redeem.id },
+      data: { redeemCount: { increment: 1 } },
+      include: {
+        registration: true,
+        partner: { include: { category: true } },
+      },
+    });
+  } else {
+    redeem = await this.prisma.redeem.create({
+      data: {
+        registrationId: registration.id,
+        partnerId,
+        redeemCount: 1,
+      },
+      include: {
+        registration: true,
+        partner: { include: { category: true } },
+      },
+    });
+  }
+  await this.prisma.registration.update({
+    where: { id: registration.id },
+    data: {
+      otp: null,
+      otpExpiresAt: null,
+      otpAttemptCount: 0,
+      otpWindowStart: null,
+    },
+  });
+
+  let remainRedeems =  partner.maxRedeems - redeem.redeemCount
+  // Send Redeem Email
+  await this.redeemMailService.sendRedeemEmail(
     redeem.registration.email,
     {
       registration: redeem.registration,
       partner: redeem.partner,
       redeemedAt: redeem.redeemedAt,
+      remainRedeems,
     }
   );
- return {
+
+  return {
     success: true,
-    message: 'Redeemed successfully! Check your email for details.',  
+    message: 'Redeemed successfully! Check your email for details.',
     redeem: {
       id: redeem.id,
+      remainRedeems,
       redeemedAt: redeem.redeemedAt,
       registration: {
         firstName: redeem.registration.firstName,
@@ -162,7 +210,8 @@ export class RedeemService {
       },
     },
   };
-  }
+}
+
 
 
 

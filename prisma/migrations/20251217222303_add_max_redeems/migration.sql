@@ -1,3 +1,19 @@
+-- CreateEnum
+CREATE TYPE "Role" AS ENUM ('USER', 'ADMIN');
+
+-- CreateTable
+CREATE TABLE "Admin" (
+    "id" TEXT NOT NULL,
+    "email" TEXT NOT NULL,
+    "password" TEXT NOT NULL,
+    "role" "Role" NOT NULL DEFAULT 'USER',
+    "resetToken" TEXT,
+    "resetTokenExpiry" TIMESTAMP(3),
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT "Admin_pkey" PRIMARY KEY ("id")
+);
+
 -- CreateTable
 CREATE TABLE "Registration" (
     "id" TEXT NOT NULL,
@@ -35,6 +51,7 @@ CREATE TABLE "Partner" (
     "name" TEXT NOT NULL,
     "discount" TEXT NOT NULL,
     "categoryId" TEXT NOT NULL,
+    "maxRedeems" INTEGER NOT NULL DEFAULT 1,
 
     CONSTRAINT "Partner_pkey" PRIMARY KEY ("id")
 );
@@ -45,6 +62,7 @@ CREATE TABLE "Redeem" (
     "registrationId" TEXT NOT NULL,
     "partnerId" TEXT NOT NULL,
     "redeemedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "redeemCount" INTEGER NOT NULL DEFAULT 1,
 
     CONSTRAINT "Redeem_pkey" PRIMARY KEY ("id")
 );
@@ -66,6 +84,9 @@ CREATE TABLE "Payment" (
 
     CONSTRAINT "Payment_pkey" PRIMARY KEY ("id")
 );
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Admin_email_key" ON "Admin"("email");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Registration_membershipId_key" ON "Registration"("membershipId");

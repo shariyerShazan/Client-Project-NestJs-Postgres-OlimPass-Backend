@@ -28,6 +28,9 @@ model Admin {
   password  String
   role      Role     @default(USER)
 
+  resetToken       String?
+  resetTokenExpiry DateTime?
+
   createdAt DateTime @default(now())
 }
 
@@ -77,6 +80,9 @@ model Partner {
   discount   String
   categoryId String
 
+  maxRedeems  Int  @default(1)
+
+
   category Category  @relation(fields: [categoryId], references: [id])
   redeems  Redeem[]
 }
@@ -89,6 +95,8 @@ model Redeem {
   partnerId      String
   redeemedAt     DateTime @default(now())
 
+  redeemCount Int     @default(1)
+  
   registration   Registration @relation(fields: [registrationId], references: [id])
   partner        Partner      @relation(fields: [partnerId], references: [id])
 }
