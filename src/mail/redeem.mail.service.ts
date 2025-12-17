@@ -12,7 +12,7 @@ export class RedeemMailService {
   });
 
   async sendRedeemEmail(to: string, redeemData: any) {
-    const { registration, partner, redeemedAt } = redeemData;
+    const { registration, partner, redeemedAt , remainRedeems} = redeemData;
 
     await this.transporter.sendMail({
       from: `"Olim Pass" <${process.env.EMAIL_USER}>`,
@@ -39,6 +39,7 @@ export class RedeemMailService {
               <p><strong>Redeemed At:</strong> ${new Date(redeemedAt).toLocaleString('en-US', {
                 year: 'numeric', month: 'long', day: 'numeric', hour:'2-digit', minute:'2-digit'
               })}</p>
+              <p><strong>Remaining Redeems:</strong> ${remainRedeems}</p>
 
                <hr style="margin:10px 0; border:none; border-top:1px solid #ddd;">
 

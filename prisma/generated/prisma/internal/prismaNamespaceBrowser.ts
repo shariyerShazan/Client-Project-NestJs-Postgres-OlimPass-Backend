@@ -123,7 +123,8 @@ export const PartnerScalarFieldEnum = {
   id: 'id',
   name: 'name',
   discount: 'discount',
-  categoryId: 'categoryId'
+  categoryId: 'categoryId',
+  maxRedeems: 'maxRedeems'
 } as const
 
 export type PartnerScalarFieldEnum = (typeof PartnerScalarFieldEnum)[keyof typeof PartnerScalarFieldEnum]
@@ -133,7 +134,8 @@ export const RedeemScalarFieldEnum = {
   id: 'id',
   registrationId: 'registrationId',
   partnerId: 'partnerId',
-  redeemedAt: 'redeemedAt'
+  redeemedAt: 'redeemedAt',
+  redeemCount: 'redeemCount'
 } as const
 
 export type RedeemScalarFieldEnum = (typeof RedeemScalarFieldEnum)[keyof typeof RedeemScalarFieldEnum]

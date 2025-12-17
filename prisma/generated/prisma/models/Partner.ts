@@ -20,8 +20,18 @@ export type PartnerModel = runtime.Types.Result.DefaultSelection<Prisma.$Partner
 
 export type AggregatePartner = {
   _count: PartnerCountAggregateOutputType | null
+  _avg: PartnerAvgAggregateOutputType | null
+  _sum: PartnerSumAggregateOutputType | null
   _min: PartnerMinAggregateOutputType | null
   _max: PartnerMaxAggregateOutputType | null
+}
+
+export type PartnerAvgAggregateOutputType = {
+  maxRedeems: number | null
+}
+
+export type PartnerSumAggregateOutputType = {
+  maxRedeems: number | null
 }
 
 export type PartnerMinAggregateOutputType = {
@@ -29,6 +39,7 @@ export type PartnerMinAggregateOutputType = {
   name: string | null
   discount: string | null
   categoryId: string | null
+  maxRedeems: number | null
 }
 
 export type PartnerMaxAggregateOutputType = {
@@ -36,6 +47,7 @@ export type PartnerMaxAggregateOutputType = {
   name: string | null
   discount: string | null
   categoryId: string | null
+  maxRedeems: number | null
 }
 
 export type PartnerCountAggregateOutputType = {
@@ -43,15 +55,25 @@ export type PartnerCountAggregateOutputType = {
   name: number
   discount: number
   categoryId: number
+  maxRedeems: number
   _all: number
 }
 
+
+export type PartnerAvgAggregateInputType = {
+  maxRedeems?: true
+}
+
+export type PartnerSumAggregateInputType = {
+  maxRedeems?: true
+}
 
 export type PartnerMinAggregateInputType = {
   id?: true
   name?: true
   discount?: true
   categoryId?: true
+  maxRedeems?: true
 }
 
 export type PartnerMaxAggregateInputType = {
@@ -59,6 +81,7 @@ export type PartnerMaxAggregateInputType = {
   name?: true
   discount?: true
   categoryId?: true
+  maxRedeems?: true
 }
 
 export type PartnerCountAggregateInputType = {
@@ -66,6 +89,7 @@ export type PartnerCountAggregateInputType = {
   name?: true
   discount?: true
   categoryId?: true
+  maxRedeems?: true
   _all?: true
 }
 
@@ -107,6 +131,18 @@ export type PartnerAggregateArgs<ExtArgs extends runtime.Types.Extensions.Intern
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
    * 
+   * Select which fields to average
+  **/
+  _avg?: PartnerAvgAggregateInputType
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+   * 
+   * Select which fields to sum
+  **/
+  _sum?: PartnerSumAggregateInputType
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+   * 
    * Select which fields to find the minimum value
   **/
   _min?: PartnerMinAggregateInputType
@@ -137,6 +173,8 @@ export type PartnerGroupByArgs<ExtArgs extends runtime.Types.Extensions.Internal
   take?: number
   skip?: number
   _count?: PartnerCountAggregateInputType | true
+  _avg?: PartnerAvgAggregateInputType
+  _sum?: PartnerSumAggregateInputType
   _min?: PartnerMinAggregateInputType
   _max?: PartnerMaxAggregateInputType
 }
@@ -146,7 +184,10 @@ export type PartnerGroupByOutputType = {
   name: string
   discount: string
   categoryId: string
+  maxRedeems: number
   _count: PartnerCountAggregateOutputType | null
+  _avg: PartnerAvgAggregateOutputType | null
+  _sum: PartnerSumAggregateOutputType | null
   _min: PartnerMinAggregateOutputType | null
   _max: PartnerMaxAggregateOutputType | null
 }
@@ -174,6 +215,7 @@ export type PartnerWhereInput = {
   name?: Prisma.StringFilter<"Partner"> | string
   discount?: Prisma.StringFilter<"Partner"> | string
   categoryId?: Prisma.StringFilter<"Partner"> | string
+  maxRedeems?: Prisma.IntFilter<"Partner"> | number
   category?: Prisma.XOR<Prisma.CategoryScalarRelationFilter, Prisma.CategoryWhereInput>
   redeems?: Prisma.RedeemListRelationFilter
 }
@@ -183,6 +225,7 @@ export type PartnerOrderByWithRelationInput = {
   name?: Prisma.SortOrder
   discount?: Prisma.SortOrder
   categoryId?: Prisma.SortOrder
+  maxRedeems?: Prisma.SortOrder
   category?: Prisma.CategoryOrderByWithRelationInput
   redeems?: Prisma.RedeemOrderByRelationAggregateInput
 }
@@ -195,6 +238,7 @@ export type PartnerWhereUniqueInput = Prisma.AtLeast<{
   name?: Prisma.StringFilter<"Partner"> | string
   discount?: Prisma.StringFilter<"Partner"> | string
   categoryId?: Prisma.StringFilter<"Partner"> | string
+  maxRedeems?: Prisma.IntFilter<"Partner"> | number
   category?: Prisma.XOR<Prisma.CategoryScalarRelationFilter, Prisma.CategoryWhereInput>
   redeems?: Prisma.RedeemListRelationFilter
 }, "id">
@@ -204,9 +248,12 @@ export type PartnerOrderByWithAggregationInput = {
   name?: Prisma.SortOrder
   discount?: Prisma.SortOrder
   categoryId?: Prisma.SortOrder
+  maxRedeems?: Prisma.SortOrder
   _count?: Prisma.PartnerCountOrderByAggregateInput
+  _avg?: Prisma.PartnerAvgOrderByAggregateInput
   _max?: Prisma.PartnerMaxOrderByAggregateInput
   _min?: Prisma.PartnerMinOrderByAggregateInput
+  _sum?: Prisma.PartnerSumOrderByAggregateInput
 }
 
 export type PartnerScalarWhereWithAggregatesInput = {
@@ -217,12 +264,14 @@ export type PartnerScalarWhereWithAggregatesInput = {
   name?: Prisma.StringWithAggregatesFilter<"Partner"> | string
   discount?: Prisma.StringWithAggregatesFilter<"Partner"> | string
   categoryId?: Prisma.StringWithAggregatesFilter<"Partner"> | string
+  maxRedeems?: Prisma.IntWithAggregatesFilter<"Partner"> | number
 }
 
 export type PartnerCreateInput = {
   id?: string
   name: string
   discount: string
+  maxRedeems?: number
   category: Prisma.CategoryCreateNestedOneWithoutPartnersInput
   redeems?: Prisma.RedeemCreateNestedManyWithoutPartnerInput
 }
@@ -232,6 +281,7 @@ export type PartnerUncheckedCreateInput = {
   name: string
   discount: string
   categoryId: string
+  maxRedeems?: number
   redeems?: Prisma.RedeemUncheckedCreateNestedManyWithoutPartnerInput
 }
 
@@ -239,6 +289,7 @@ export type PartnerUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   discount?: Prisma.StringFieldUpdateOperationsInput | string
+  maxRedeems?: Prisma.IntFieldUpdateOperationsInput | number
   category?: Prisma.CategoryUpdateOneRequiredWithoutPartnersNestedInput
   redeems?: Prisma.RedeemUpdateManyWithoutPartnerNestedInput
 }
@@ -248,6 +299,7 @@ export type PartnerUncheckedUpdateInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   discount?: Prisma.StringFieldUpdateOperationsInput | string
   categoryId?: Prisma.StringFieldUpdateOperationsInput | string
+  maxRedeems?: Prisma.IntFieldUpdateOperationsInput | number
   redeems?: Prisma.RedeemUncheckedUpdateManyWithoutPartnerNestedInput
 }
 
@@ -256,12 +308,14 @@ export type PartnerCreateManyInput = {
   name: string
   discount: string
   categoryId: string
+  maxRedeems?: number
 }
 
 export type PartnerUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   discount?: Prisma.StringFieldUpdateOperationsInput | string
+  maxRedeems?: Prisma.IntFieldUpdateOperationsInput | number
 }
 
 export type PartnerUncheckedUpdateManyInput = {
@@ -269,6 +323,7 @@ export type PartnerUncheckedUpdateManyInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   discount?: Prisma.StringFieldUpdateOperationsInput | string
   categoryId?: Prisma.StringFieldUpdateOperationsInput | string
+  maxRedeems?: Prisma.IntFieldUpdateOperationsInput | number
 }
 
 export type PartnerListRelationFilter = {
@@ -286,6 +341,11 @@ export type PartnerCountOrderByAggregateInput = {
   name?: Prisma.SortOrder
   discount?: Prisma.SortOrder
   categoryId?: Prisma.SortOrder
+  maxRedeems?: Prisma.SortOrder
+}
+
+export type PartnerAvgOrderByAggregateInput = {
+  maxRedeems?: Prisma.SortOrder
 }
 
 export type PartnerMaxOrderByAggregateInput = {
@@ -293,6 +353,7 @@ export type PartnerMaxOrderByAggregateInput = {
   name?: Prisma.SortOrder
   discount?: Prisma.SortOrder
   categoryId?: Prisma.SortOrder
+  maxRedeems?: Prisma.SortOrder
 }
 
 export type PartnerMinOrderByAggregateInput = {
@@ -300,6 +361,11 @@ export type PartnerMinOrderByAggregateInput = {
   name?: Prisma.SortOrder
   discount?: Prisma.SortOrder
   categoryId?: Prisma.SortOrder
+  maxRedeems?: Prisma.SortOrder
+}
+
+export type PartnerSumOrderByAggregateInput = {
+  maxRedeems?: Prisma.SortOrder
 }
 
 export type PartnerScalarRelationFilter = {
@@ -367,6 +433,7 @@ export type PartnerCreateWithoutCategoryInput = {
   id?: string
   name: string
   discount: string
+  maxRedeems?: number
   redeems?: Prisma.RedeemCreateNestedManyWithoutPartnerInput
 }
 
@@ -374,6 +441,7 @@ export type PartnerUncheckedCreateWithoutCategoryInput = {
   id?: string
   name: string
   discount: string
+  maxRedeems?: number
   redeems?: Prisma.RedeemUncheckedCreateNestedManyWithoutPartnerInput
 }
 
@@ -411,12 +479,14 @@ export type PartnerScalarWhereInput = {
   name?: Prisma.StringFilter<"Partner"> | string
   discount?: Prisma.StringFilter<"Partner"> | string
   categoryId?: Prisma.StringFilter<"Partner"> | string
+  maxRedeems?: Prisma.IntFilter<"Partner"> | number
 }
 
 export type PartnerCreateWithoutRedeemsInput = {
   id?: string
   name: string
   discount: string
+  maxRedeems?: number
   category: Prisma.CategoryCreateNestedOneWithoutPartnersInput
 }
 
@@ -425,6 +495,7 @@ export type PartnerUncheckedCreateWithoutRedeemsInput = {
   name: string
   discount: string
   categoryId: string
+  maxRedeems?: number
 }
 
 export type PartnerCreateOrConnectWithoutRedeemsInput = {
@@ -447,6 +518,7 @@ export type PartnerUpdateWithoutRedeemsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   discount?: Prisma.StringFieldUpdateOperationsInput | string
+  maxRedeems?: Prisma.IntFieldUpdateOperationsInput | number
   category?: Prisma.CategoryUpdateOneRequiredWithoutPartnersNestedInput
 }
 
@@ -455,18 +527,21 @@ export type PartnerUncheckedUpdateWithoutRedeemsInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   discount?: Prisma.StringFieldUpdateOperationsInput | string
   categoryId?: Prisma.StringFieldUpdateOperationsInput | string
+  maxRedeems?: Prisma.IntFieldUpdateOperationsInput | number
 }
 
 export type PartnerCreateManyCategoryInput = {
   id?: string
   name: string
   discount: string
+  maxRedeems?: number
 }
 
 export type PartnerUpdateWithoutCategoryInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   discount?: Prisma.StringFieldUpdateOperationsInput | string
+  maxRedeems?: Prisma.IntFieldUpdateOperationsInput | number
   redeems?: Prisma.RedeemUpdateManyWithoutPartnerNestedInput
 }
 
@@ -474,6 +549,7 @@ export type PartnerUncheckedUpdateWithoutCategoryInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   discount?: Prisma.StringFieldUpdateOperationsInput | string
+  maxRedeems?: Prisma.IntFieldUpdateOperationsInput | number
   redeems?: Prisma.RedeemUncheckedUpdateManyWithoutPartnerNestedInput
 }
 
@@ -481,6 +557,7 @@ export type PartnerUncheckedUpdateManyWithoutCategoryInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   discount?: Prisma.StringFieldUpdateOperationsInput | string
+  maxRedeems?: Prisma.IntFieldUpdateOperationsInput | number
 }
 
 
@@ -519,6 +596,7 @@ export type PartnerSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   name?: boolean
   discount?: boolean
   categoryId?: boolean
+  maxRedeems?: boolean
   category?: boolean | Prisma.CategoryDefaultArgs<ExtArgs>
   redeems?: boolean | Prisma.Partner$redeemsArgs<ExtArgs>
   _count?: boolean | Prisma.PartnerCountOutputTypeDefaultArgs<ExtArgs>
@@ -529,6 +607,7 @@ export type PartnerSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exten
   name?: boolean
   discount?: boolean
   categoryId?: boolean
+  maxRedeems?: boolean
   category?: boolean | Prisma.CategoryDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["partner"]>
 
@@ -537,6 +616,7 @@ export type PartnerSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exten
   name?: boolean
   discount?: boolean
   categoryId?: boolean
+  maxRedeems?: boolean
   category?: boolean | Prisma.CategoryDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["partner"]>
 
@@ -545,9 +625,10 @@ export type PartnerSelectScalar = {
   name?: boolean
   discount?: boolean
   categoryId?: boolean
+  maxRedeems?: boolean
 }
 
-export type PartnerOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "discount" | "categoryId", ExtArgs["result"]["partner"]>
+export type PartnerOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "discount" | "categoryId" | "maxRedeems", ExtArgs["result"]["partner"]>
 export type PartnerInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   category?: boolean | Prisma.CategoryDefaultArgs<ExtArgs>
   redeems?: boolean | Prisma.Partner$redeemsArgs<ExtArgs>
@@ -571,6 +652,7 @@ export type $PartnerPayload<ExtArgs extends runtime.Types.Extensions.InternalArg
     name: string
     discount: string
     categoryId: string
+    maxRedeems: number
   }, ExtArgs["result"]["partner"]>
   composites: {}
 }
@@ -1000,6 +1082,7 @@ export interface PartnerFieldRefs {
   readonly name: Prisma.FieldRef<"Partner", 'String'>
   readonly discount: Prisma.FieldRef<"Partner", 'String'>
   readonly categoryId: Prisma.FieldRef<"Partner", 'String'>
+  readonly maxRedeems: Prisma.FieldRef<"Partner", 'Int'>
 }
     
 
