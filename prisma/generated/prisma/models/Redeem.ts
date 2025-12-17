@@ -20,8 +20,18 @@ export type RedeemModel = runtime.Types.Result.DefaultSelection<Prisma.$RedeemPa
 
 export type AggregateRedeem = {
   _count: RedeemCountAggregateOutputType | null
+  _avg: RedeemAvgAggregateOutputType | null
+  _sum: RedeemSumAggregateOutputType | null
   _min: RedeemMinAggregateOutputType | null
   _max: RedeemMaxAggregateOutputType | null
+}
+
+export type RedeemAvgAggregateOutputType = {
+  redeemCount: number | null
+}
+
+export type RedeemSumAggregateOutputType = {
+  redeemCount: number | null
 }
 
 export type RedeemMinAggregateOutputType = {
@@ -29,6 +39,7 @@ export type RedeemMinAggregateOutputType = {
   registrationId: string | null
   partnerId: string | null
   redeemedAt: Date | null
+  redeemCount: number | null
 }
 
 export type RedeemMaxAggregateOutputType = {
@@ -36,6 +47,7 @@ export type RedeemMaxAggregateOutputType = {
   registrationId: string | null
   partnerId: string | null
   redeemedAt: Date | null
+  redeemCount: number | null
 }
 
 export type RedeemCountAggregateOutputType = {
@@ -43,15 +55,25 @@ export type RedeemCountAggregateOutputType = {
   registrationId: number
   partnerId: number
   redeemedAt: number
+  redeemCount: number
   _all: number
 }
 
+
+export type RedeemAvgAggregateInputType = {
+  redeemCount?: true
+}
+
+export type RedeemSumAggregateInputType = {
+  redeemCount?: true
+}
 
 export type RedeemMinAggregateInputType = {
   id?: true
   registrationId?: true
   partnerId?: true
   redeemedAt?: true
+  redeemCount?: true
 }
 
 export type RedeemMaxAggregateInputType = {
@@ -59,6 +81,7 @@ export type RedeemMaxAggregateInputType = {
   registrationId?: true
   partnerId?: true
   redeemedAt?: true
+  redeemCount?: true
 }
 
 export type RedeemCountAggregateInputType = {
@@ -66,6 +89,7 @@ export type RedeemCountAggregateInputType = {
   registrationId?: true
   partnerId?: true
   redeemedAt?: true
+  redeemCount?: true
   _all?: true
 }
 
@@ -107,6 +131,18 @@ export type RedeemAggregateArgs<ExtArgs extends runtime.Types.Extensions.Interna
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
    * 
+   * Select which fields to average
+  **/
+  _avg?: RedeemAvgAggregateInputType
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+   * 
+   * Select which fields to sum
+  **/
+  _sum?: RedeemSumAggregateInputType
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+   * 
    * Select which fields to find the minimum value
   **/
   _min?: RedeemMinAggregateInputType
@@ -137,6 +173,8 @@ export type RedeemGroupByArgs<ExtArgs extends runtime.Types.Extensions.InternalA
   take?: number
   skip?: number
   _count?: RedeemCountAggregateInputType | true
+  _avg?: RedeemAvgAggregateInputType
+  _sum?: RedeemSumAggregateInputType
   _min?: RedeemMinAggregateInputType
   _max?: RedeemMaxAggregateInputType
 }
@@ -146,7 +184,10 @@ export type RedeemGroupByOutputType = {
   registrationId: string
   partnerId: string
   redeemedAt: Date
+  redeemCount: number
   _count: RedeemCountAggregateOutputType | null
+  _avg: RedeemAvgAggregateOutputType | null
+  _sum: RedeemSumAggregateOutputType | null
   _min: RedeemMinAggregateOutputType | null
   _max: RedeemMaxAggregateOutputType | null
 }
@@ -174,6 +215,7 @@ export type RedeemWhereInput = {
   registrationId?: Prisma.StringFilter<"Redeem"> | string
   partnerId?: Prisma.StringFilter<"Redeem"> | string
   redeemedAt?: Prisma.DateTimeFilter<"Redeem"> | Date | string
+  redeemCount?: Prisma.IntFilter<"Redeem"> | number
   registration?: Prisma.XOR<Prisma.RegistrationScalarRelationFilter, Prisma.RegistrationWhereInput>
   partner?: Prisma.XOR<Prisma.PartnerScalarRelationFilter, Prisma.PartnerWhereInput>
 }
@@ -183,6 +225,7 @@ export type RedeemOrderByWithRelationInput = {
   registrationId?: Prisma.SortOrder
   partnerId?: Prisma.SortOrder
   redeemedAt?: Prisma.SortOrder
+  redeemCount?: Prisma.SortOrder
   registration?: Prisma.RegistrationOrderByWithRelationInput
   partner?: Prisma.PartnerOrderByWithRelationInput
 }
@@ -195,6 +238,7 @@ export type RedeemWhereUniqueInput = Prisma.AtLeast<{
   registrationId?: Prisma.StringFilter<"Redeem"> | string
   partnerId?: Prisma.StringFilter<"Redeem"> | string
   redeemedAt?: Prisma.DateTimeFilter<"Redeem"> | Date | string
+  redeemCount?: Prisma.IntFilter<"Redeem"> | number
   registration?: Prisma.XOR<Prisma.RegistrationScalarRelationFilter, Prisma.RegistrationWhereInput>
   partner?: Prisma.XOR<Prisma.PartnerScalarRelationFilter, Prisma.PartnerWhereInput>
 }, "id">
@@ -204,9 +248,12 @@ export type RedeemOrderByWithAggregationInput = {
   registrationId?: Prisma.SortOrder
   partnerId?: Prisma.SortOrder
   redeemedAt?: Prisma.SortOrder
+  redeemCount?: Prisma.SortOrder
   _count?: Prisma.RedeemCountOrderByAggregateInput
+  _avg?: Prisma.RedeemAvgOrderByAggregateInput
   _max?: Prisma.RedeemMaxOrderByAggregateInput
   _min?: Prisma.RedeemMinOrderByAggregateInput
+  _sum?: Prisma.RedeemSumOrderByAggregateInput
 }
 
 export type RedeemScalarWhereWithAggregatesInput = {
@@ -217,11 +264,13 @@ export type RedeemScalarWhereWithAggregatesInput = {
   registrationId?: Prisma.StringWithAggregatesFilter<"Redeem"> | string
   partnerId?: Prisma.StringWithAggregatesFilter<"Redeem"> | string
   redeemedAt?: Prisma.DateTimeWithAggregatesFilter<"Redeem"> | Date | string
+  redeemCount?: Prisma.IntWithAggregatesFilter<"Redeem"> | number
 }
 
 export type RedeemCreateInput = {
   id?: string
   redeemedAt?: Date | string
+  redeemCount?: number
   registration: Prisma.RegistrationCreateNestedOneWithoutRedeemsInput
   partner: Prisma.PartnerCreateNestedOneWithoutRedeemsInput
 }
@@ -231,11 +280,13 @@ export type RedeemUncheckedCreateInput = {
   registrationId: string
   partnerId: string
   redeemedAt?: Date | string
+  redeemCount?: number
 }
 
 export type RedeemUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   redeemedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  redeemCount?: Prisma.IntFieldUpdateOperationsInput | number
   registration?: Prisma.RegistrationUpdateOneRequiredWithoutRedeemsNestedInput
   partner?: Prisma.PartnerUpdateOneRequiredWithoutRedeemsNestedInput
 }
@@ -245,6 +296,7 @@ export type RedeemUncheckedUpdateInput = {
   registrationId?: Prisma.StringFieldUpdateOperationsInput | string
   partnerId?: Prisma.StringFieldUpdateOperationsInput | string
   redeemedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  redeemCount?: Prisma.IntFieldUpdateOperationsInput | number
 }
 
 export type RedeemCreateManyInput = {
@@ -252,11 +304,13 @@ export type RedeemCreateManyInput = {
   registrationId: string
   partnerId: string
   redeemedAt?: Date | string
+  redeemCount?: number
 }
 
 export type RedeemUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   redeemedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  redeemCount?: Prisma.IntFieldUpdateOperationsInput | number
 }
 
 export type RedeemUncheckedUpdateManyInput = {
@@ -264,6 +318,7 @@ export type RedeemUncheckedUpdateManyInput = {
   registrationId?: Prisma.StringFieldUpdateOperationsInput | string
   partnerId?: Prisma.StringFieldUpdateOperationsInput | string
   redeemedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  redeemCount?: Prisma.IntFieldUpdateOperationsInput | number
 }
 
 export type RedeemListRelationFilter = {
@@ -281,6 +336,11 @@ export type RedeemCountOrderByAggregateInput = {
   registrationId?: Prisma.SortOrder
   partnerId?: Prisma.SortOrder
   redeemedAt?: Prisma.SortOrder
+  redeemCount?: Prisma.SortOrder
+}
+
+export type RedeemAvgOrderByAggregateInput = {
+  redeemCount?: Prisma.SortOrder
 }
 
 export type RedeemMaxOrderByAggregateInput = {
@@ -288,6 +348,7 @@ export type RedeemMaxOrderByAggregateInput = {
   registrationId?: Prisma.SortOrder
   partnerId?: Prisma.SortOrder
   redeemedAt?: Prisma.SortOrder
+  redeemCount?: Prisma.SortOrder
 }
 
 export type RedeemMinOrderByAggregateInput = {
@@ -295,6 +356,11 @@ export type RedeemMinOrderByAggregateInput = {
   registrationId?: Prisma.SortOrder
   partnerId?: Prisma.SortOrder
   redeemedAt?: Prisma.SortOrder
+  redeemCount?: Prisma.SortOrder
+}
+
+export type RedeemSumOrderByAggregateInput = {
+  redeemCount?: Prisma.SortOrder
 }
 
 export type RedeemCreateNestedManyWithoutRegistrationInput = {
@@ -384,6 +450,7 @@ export type RedeemUncheckedUpdateManyWithoutPartnerNestedInput = {
 export type RedeemCreateWithoutRegistrationInput = {
   id?: string
   redeemedAt?: Date | string
+  redeemCount?: number
   partner: Prisma.PartnerCreateNestedOneWithoutRedeemsInput
 }
 
@@ -391,6 +458,7 @@ export type RedeemUncheckedCreateWithoutRegistrationInput = {
   id?: string
   partnerId: string
   redeemedAt?: Date | string
+  redeemCount?: number
 }
 
 export type RedeemCreateOrConnectWithoutRegistrationInput = {
@@ -427,11 +495,13 @@ export type RedeemScalarWhereInput = {
   registrationId?: Prisma.StringFilter<"Redeem"> | string
   partnerId?: Prisma.StringFilter<"Redeem"> | string
   redeemedAt?: Prisma.DateTimeFilter<"Redeem"> | Date | string
+  redeemCount?: Prisma.IntFilter<"Redeem"> | number
 }
 
 export type RedeemCreateWithoutPartnerInput = {
   id?: string
   redeemedAt?: Date | string
+  redeemCount?: number
   registration: Prisma.RegistrationCreateNestedOneWithoutRedeemsInput
 }
 
@@ -439,6 +509,7 @@ export type RedeemUncheckedCreateWithoutPartnerInput = {
   id?: string
   registrationId: string
   redeemedAt?: Date | string
+  redeemCount?: number
 }
 
 export type RedeemCreateOrConnectWithoutPartnerInput = {
@@ -471,11 +542,13 @@ export type RedeemCreateManyRegistrationInput = {
   id?: string
   partnerId: string
   redeemedAt?: Date | string
+  redeemCount?: number
 }
 
 export type RedeemUpdateWithoutRegistrationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   redeemedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  redeemCount?: Prisma.IntFieldUpdateOperationsInput | number
   partner?: Prisma.PartnerUpdateOneRequiredWithoutRedeemsNestedInput
 }
 
@@ -483,23 +556,27 @@ export type RedeemUncheckedUpdateWithoutRegistrationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   partnerId?: Prisma.StringFieldUpdateOperationsInput | string
   redeemedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  redeemCount?: Prisma.IntFieldUpdateOperationsInput | number
 }
 
 export type RedeemUncheckedUpdateManyWithoutRegistrationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   partnerId?: Prisma.StringFieldUpdateOperationsInput | string
   redeemedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  redeemCount?: Prisma.IntFieldUpdateOperationsInput | number
 }
 
 export type RedeemCreateManyPartnerInput = {
   id?: string
   registrationId: string
   redeemedAt?: Date | string
+  redeemCount?: number
 }
 
 export type RedeemUpdateWithoutPartnerInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   redeemedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  redeemCount?: Prisma.IntFieldUpdateOperationsInput | number
   registration?: Prisma.RegistrationUpdateOneRequiredWithoutRedeemsNestedInput
 }
 
@@ -507,12 +584,14 @@ export type RedeemUncheckedUpdateWithoutPartnerInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   registrationId?: Prisma.StringFieldUpdateOperationsInput | string
   redeemedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  redeemCount?: Prisma.IntFieldUpdateOperationsInput | number
 }
 
 export type RedeemUncheckedUpdateManyWithoutPartnerInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   registrationId?: Prisma.StringFieldUpdateOperationsInput | string
   redeemedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  redeemCount?: Prisma.IntFieldUpdateOperationsInput | number
 }
 
 
@@ -522,6 +601,7 @@ export type RedeemSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   registrationId?: boolean
   partnerId?: boolean
   redeemedAt?: boolean
+  redeemCount?: boolean
   registration?: boolean | Prisma.RegistrationDefaultArgs<ExtArgs>
   partner?: boolean | Prisma.PartnerDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["redeem"]>
@@ -531,6 +611,7 @@ export type RedeemSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extens
   registrationId?: boolean
   partnerId?: boolean
   redeemedAt?: boolean
+  redeemCount?: boolean
   registration?: boolean | Prisma.RegistrationDefaultArgs<ExtArgs>
   partner?: boolean | Prisma.PartnerDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["redeem"]>
@@ -540,6 +621,7 @@ export type RedeemSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extens
   registrationId?: boolean
   partnerId?: boolean
   redeemedAt?: boolean
+  redeemCount?: boolean
   registration?: boolean | Prisma.RegistrationDefaultArgs<ExtArgs>
   partner?: boolean | Prisma.PartnerDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["redeem"]>
@@ -549,9 +631,10 @@ export type RedeemSelectScalar = {
   registrationId?: boolean
   partnerId?: boolean
   redeemedAt?: boolean
+  redeemCount?: boolean
 }
 
-export type RedeemOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "registrationId" | "partnerId" | "redeemedAt", ExtArgs["result"]["redeem"]>
+export type RedeemOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "registrationId" | "partnerId" | "redeemedAt" | "redeemCount", ExtArgs["result"]["redeem"]>
 export type RedeemInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   registration?: boolean | Prisma.RegistrationDefaultArgs<ExtArgs>
   partner?: boolean | Prisma.PartnerDefaultArgs<ExtArgs>
@@ -576,6 +659,7 @@ export type $RedeemPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs
     registrationId: string
     partnerId: string
     redeemedAt: Date
+    redeemCount: number
   }, ExtArgs["result"]["redeem"]>
   composites: {}
 }
@@ -1005,6 +1089,7 @@ export interface RedeemFieldRefs {
   readonly registrationId: Prisma.FieldRef<"Redeem", 'String'>
   readonly partnerId: Prisma.FieldRef<"Redeem", 'String'>
   readonly redeemedAt: Prisma.FieldRef<"Redeem", 'DateTime'>
+  readonly redeemCount: Prisma.FieldRef<"Redeem", 'Int'>
 }
     
 

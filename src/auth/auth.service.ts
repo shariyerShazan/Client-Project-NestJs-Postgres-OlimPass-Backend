@@ -9,13 +9,21 @@ import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
+// import { ForgotPasswordDto } from './dto/forgot-password.dto';
+// import { AuthMailService } from 'src/mail/auth-mail.service';
+import { ResetPasswordDto } from './dto/reset-password.dto';
 
 @Injectable()
 export class AuthService {
   constructor(
     private prisma: PrismaService,
     private jwtService: JwtService,
+    // private mailService: AuthMailService,
   ) {}
+
+  // private generateOtp(): string {
+  //   return Math.floor(1000 + Math.random() * 9000).toString();
+  // }
 
   async register(dto: RegisterDto) {
     const exists = await this.prisma.admin.findUnique({
@@ -102,4 +110,38 @@ export class AuthService {
       message: 'Logged out successfully',
     };
   }
+
+
+async resetPassword(userId: string, dto: ResetPasswordDto) {
+  const user = await this.prisma.admin.findUnique({
+    where: { id: userId },
+  });
+
+  if (!user) {
+    throw new UnauthorizedException('User not found');
+  }
+
+  const isMatch = await bcrypt.compare(dto.currentPassword, user.password);
+
+  if (!isMatch) {
+    throw new BadRequestException('Current password is incorrect');
+  }
+
+  const hashedPassword = await bcrypt.hash(dto.newPassword, 10);
+
+  await this.prisma.admin.update({
+    where: { id: user.id },
+    data: {
+      password: hashedPassword,
+    },
+  });
+
+  return {
+    success: true,
+    message: 'Password updated successfully',
+  };
+}
+
+
+
 }
