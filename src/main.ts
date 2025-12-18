@@ -24,6 +24,9 @@ async function bootstrap() {
     '/webhook',
     bodyParser.raw({ type: 'application/json' }),
   );
+  app.use(bodyParser.json())
+
+  
   await app.listen(process.env.PORT ?? 3333);
 }
 bootstrap();
