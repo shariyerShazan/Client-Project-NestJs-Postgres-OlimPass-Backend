@@ -8,7 +8,7 @@ import { RegisterModule } from './register/register.module';
 import { ConfigModule } from '@nestjs/config';
 import { WebhookController } from './webhook/webhook.controller';
 import { RedeemModule } from './redeem/redeem.module';
-import { MailService } from './mail/mail.service';
+import { MailService } from './mail/membership-mail.service';
 import { ScheduleModule } from '@nestjs/schedule';
 import { ExpireRegisterService } from './expire-register/expire-register.service';
 import { CategoryService } from './category/category.service';

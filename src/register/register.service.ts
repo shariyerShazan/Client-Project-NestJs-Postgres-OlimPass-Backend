@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import Stripe from 'stripe';
-import { MailService } from 'src/mail/mail.service';
+import { MembershipMailService } from 'src/mail/membership-mail.service';
 import { CreateRegistrationDto } from './dto/create-registration.dto';
 
 @Injectable()
@@ -9,7 +9,7 @@ export class RegisterService {
   private stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, { apiVersion: '2025-11-17.clover' });
 
   constructor(private prisma: PrismaService
-    , private mailService: MailService
+    , private mailService: MembershipMailService
   ) {}
 
   private async generateUniqueMembershipId(): Promise<string> {
@@ -99,13 +99,6 @@ const paymentIntent = await this.stripe.paymentIntents.create({
   },
 });
 
-
-
-
-
-
-
-    // Save payment record
     const paymentRecord = await this.prisma.payment.create({
       data: {
         registrationId: registration.id,
@@ -117,11 +110,6 @@ const paymentIntent = await this.stripe.paymentIntents.create({
       },
     });
 
-    //  await this.mailService.sendMembershipEmail(
-    //       registration.email,
-    //       registration.firstName,
-    //       membershipId,
-    //     );
 
     return {
       registration,
@@ -135,9 +123,18 @@ const paymentIntent = await this.stripe.paymentIntents.create({
       where: { id },
     });
 
-    if (!registration) {
+      if(!registration){
       throw new Error('Registration not found');
     }
+    if(!registration.isActive){
+      throw new Error('Registration is not active');
+    }
+
+       await this.mailService.sendMembershipEmail(
+          registration.email,
+          registration.firstName,
+          registration.membershipId,
+        );
 
     return registration;
   }
