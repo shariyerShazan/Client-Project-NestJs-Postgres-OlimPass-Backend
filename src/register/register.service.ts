@@ -118,6 +118,10 @@ const paymentIntent = await this.stripe.paymentIntents.create({
     };
   }
 
+
+
+
+  
   async getRegistrationById(id: string) {
     const registration = await this.prisma.registration.findUnique({
       where: { id },
@@ -126,16 +130,6 @@ const paymentIntent = await this.stripe.paymentIntents.create({
       if(!registration){
       throw new Error('Registration not found');
     }
-    // if(!registration.isActive){
-    //   throw new Error('Registration is not active');
-    // }
-
-    //    await this.mailService.sendMembershipEmail(
-    //       registration.email,
-    //       registration.firstName,
-    //       registration.membershipId,
-    //     );
-
     return registration;
   }
 
@@ -174,5 +168,23 @@ async findAll(
     totalPages: Math.ceil(total / limitNum),
   }
 }
+
+
+async sendMembershipEmail(registrationId: string) {
+  const registration = await this.prisma.registration.findUnique({
+    where: { id: registrationId },
+  });
+
+  if (!registration) throw new Error('Registration not found');
+
+  const membershipId = registration.membershipId.replace(/^InActive/, '');
+
+  return this.mailService.sendMembershipEmail(
+    registration.email,
+    registration.firstName,
+    membershipId,
+  );
+}
+
 
 }
