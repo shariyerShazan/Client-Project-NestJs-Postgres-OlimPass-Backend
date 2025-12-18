@@ -22,7 +22,7 @@ async function bootstrap() {
   );
   app.use(
     '/webhook',
-    bodyParser.raw({ type: 'application/json' }),
+    bodyParser.raw({ type: 'application/json' ,  limit: '1mb'}),
   );
   app.use(bodyParser.json())
 
