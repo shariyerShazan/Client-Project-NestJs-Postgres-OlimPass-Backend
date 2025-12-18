@@ -2,6 +2,7 @@ import { Controller, Post, Req, Res, Headers } from '@nestjs/common';
 import type { Request, Response } from 'express';
 import Stripe from 'stripe';
 import { PrismaService } from '../prisma/prisma.service';
+import { MembershipMailService } from 'src/mail/membership-mail.service';
 
 @Controller('webhook')
 export class WebhookController {
@@ -9,7 +10,7 @@ export class WebhookController {
     apiVersion: '2025-11-17.clover',
   });
 
-  constructor(private prisma: PrismaService) {}
+  constructor(private prisma: PrismaService ,  private mailService: MembershipMailService ) {}
 
   // private async generateUniqueMembershipId(): Promise<string> {
   //   let id: string;
@@ -66,7 +67,7 @@ export class WebhookController {
     }
   }
 
-  
+
 
 private async handlePaymentSucceeded(event: Stripe.Event) {
   const paymentIntent = event.data.object as Stripe.PaymentIntent;
@@ -88,6 +89,7 @@ private async handlePaymentSucceeded(event: Stripe.Event) {
 
   const finalMembershipId = registration.membershipId.replace(/^InActive/, '');
 
+  // DB updates in transaction
   await this.prisma.$transaction(async (tx) => {
     await tx.payment.update({
       where: { stripeSessionId: paymentIntent.id },
@@ -103,8 +105,16 @@ private async handlePaymentSucceeded(event: Stripe.Event) {
     });
   });
 
+  // Mail send **after transaction**, async
+  this.mailService.sendMembershipEmail(
+    registration.email,
+    registration.firstName,
+    finalMembershipId, // finalMembershipId , registration.membershipId
+  ).catch(err => console.error("Mail send failed:", err));
+
   console.log(`Payment succeeded for registration ${registrationId} with membershipId ${finalMembershipId}`);
 }
+
 
 
 

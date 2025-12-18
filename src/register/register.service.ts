@@ -126,15 +126,15 @@ const paymentIntent = await this.stripe.paymentIntents.create({
       if(!registration){
       throw new Error('Registration not found');
     }
-    if(!registration.isActive){
-      throw new Error('Registration is not active');
-    }
+    // if(!registration.isActive){
+    //   throw new Error('Registration is not active');
+    // }
 
-       await this.mailService.sendMembershipEmail(
-          registration.email,
-          registration.firstName,
-          registration.membershipId,
-        );
+    //    await this.mailService.sendMembershipEmail(
+    //       registration.email,
+    //       registration.firstName,
+    //       registration.membershipId,
+    //     );
 
     return registration;
   }

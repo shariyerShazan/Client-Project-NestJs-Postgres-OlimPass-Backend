@@ -61,8 +61,8 @@ model Registration {
   payments Payment[]
   redeems  Redeem[]
 
- mailSent     Boolean  @default(false) 
- 
+//  mailSent     Boolean  @default(false) 
+
   createdAt DateTime @default(now())
 }
 
