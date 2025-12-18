@@ -26,8 +26,8 @@ async function bootstrap() {
   );
   app.use(bodyParser.json())
 
-  
-  await app.listen(process.env.PORT ?? 3333);
+
+  await app.listen(process.env.PORT || 3333);
 }
 bootstrap();
 
