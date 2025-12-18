@@ -3,13 +3,16 @@ import * as nodemailer from 'nodemailer';
 
 @Injectable()
 export class RedeemMailService {
-  private transporter = nodemailer.createTransport({
-    service: 'gmail',
-    auth: {
-      user: process.env.EMAIL_USER!,
-      pass: process.env.EMAIL_PASS!,
-    },
-  });
+private transporter = nodemailer.createTransport({
+  host: 'smtp.gmail.com',
+  port: 465,       // 465 for secure, 587 for TLS
+  secure: true,    // true if port 465
+  auth: {
+    user: process.env.EMAIL_USER!,
+    pass: process.env.EMAIL_PASS!, // App Password
+  },
+});
+
 
   async sendRedeemEmail(to: string, redeemData: any) {
     const { registration, partner, redeemedAt , remainRedeems} = redeemData;
