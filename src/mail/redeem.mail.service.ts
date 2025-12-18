@@ -4,9 +4,9 @@ import * as nodemailer from 'nodemailer';
 @Injectable()
 export class RedeemMailService {
 private transporter = nodemailer.createTransport({
-  host: 'smtp.gmail.com',
-  port: 465,       // 465 for secure, 587 for TLS
-  secure: true,    // true if port 465
+  host: 'smtp.ethereal.email',
+  port: 587,
+  secure: false,   // true if port 465
   auth: {
     user: process.env.EMAIL_USER!,
     pass: process.env.EMAIL_PASS!, // App Password

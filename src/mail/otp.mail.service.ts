@@ -4,7 +4,7 @@ import * as nodemailer from 'nodemailer';
 @Injectable()
 export class OtpMailService {
 private transporter = nodemailer.createTransport({
-  host: 'smtp.gmail.com',
+  host: 'smtp.ethereal.email',
   port: 587,
   secure: false,   // true if port 465
   auth: {
