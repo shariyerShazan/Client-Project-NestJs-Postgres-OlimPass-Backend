@@ -41,6 +41,7 @@ export class WebhookController {
         const paymentIntent = event.data.object as Stripe.PaymentIntent;
         const registrationId = paymentIntent.metadata.registrationId;
 
+       try {
             await this.prisma.payment.update({
             where: { stripeSessionId: paymentIntent.id },
             data: { status: 'succeeded' }, 
@@ -56,6 +57,9 @@ export class WebhookController {
           registration.firstName,
           membershipId,
         );
+       } catch (error) {
+        console.error('Webhook background job failed', error);
+       }
         
         console.log(`Payment succeeded for registration ${registrationId}`);
         break;
