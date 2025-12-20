@@ -1,25 +1,22 @@
+
+
 import { Injectable } from '@nestjs/common';
-import * as nodemailer from 'nodemailer';
+import { MailClient } from './mail.client';
 
 @Injectable()
 export class MembershipMailService {
-private transporter = nodemailer.createTransport({
-  host: 'smtp.ethereal.email',
-  port: 587,
-  secure: false,   // true if port 465
-  auth: {
-    user: process.env.EMAIL_USER!,
-    pass: process.env.EMAIL_PASS!, // App Password
-  },
-});
+  constructor(private readonly mailClient: MailClient) {}
 
-
-  async sendMembershipEmail(to: string, name: string, membershipId: string) {
-    await this.transporter.sendMail({
-      from: `"Olim Pass" <${process.env.EMAIL_USER}>`,
+  async sendMembership(
+    to: string,
+    name: string,
+    membershipId: string,
+  ) {
+    return this.mailClient.send({
       to,
+      name,
       subject: 'Welcome! Your Olim Pass Membership ID',
-      html: `
+            html: `
              <div style="
                 width: 100%;
                 background-color: #f4f4f4;
@@ -93,6 +90,5 @@ private transporter = nodemailer.createTransport({
 
       `,
     });
-    console.log("mail send!")
   }
 }

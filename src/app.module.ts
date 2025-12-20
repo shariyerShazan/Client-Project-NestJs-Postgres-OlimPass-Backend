@@ -17,6 +17,7 @@ import { PartnerService } from './partner/partner.service';
 import { PartnerModule } from './partner/partner.module';
 import { AuthModule } from './auth/auth.module';
 import { MembershipMailService } from './mail/membership-mail.service';
+import { MailModule } from './mail/mail.module';
 
 
 
@@ -31,6 +32,7 @@ import { MembershipMailService } from './mail/membership-mail.service';
     CategoryModule,
     PartnerModule,
     AuthModule,
+    MailModule,
   ],
   controllers: [AppController, WebhookController],
   providers: [AppService, PrismaService, RegisterService, MembershipMailService, ExpireRegisterService, CategoryService, PartnerService],

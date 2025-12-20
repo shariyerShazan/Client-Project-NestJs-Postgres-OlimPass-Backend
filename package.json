@@ -5,12 +5,12 @@
   "author": "",
   "private": true,
   "license": "UNLICENSED",
-"scripts": {
-  "build": "nest build",
-  "start": "nest start",
-  "start:dev": "nest start --watch",
-  "start:prod": "node --max-old-space-size=4096 dist/src/main.js"
-},
+  "scripts": {
+    "build": "nest build",
+    "start": "nest start",
+    "start:dev": "nest start --watch",
+    "start:prod": "node --max-old-space-size=4096 dist/src/main.js"
+  },
   "dependencies": {
     "@nestjs/common": "^11.0.1",
     "@nestjs/config": "^4.0.2",
@@ -31,6 +31,7 @@
     "passport-jwt": "^4.0.1",
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.1",
+    "sib-api-v3-sdk": "^8.5.0",
     "stripe": "^20.0.0",
     "tsx": "^4.21.0"
   },

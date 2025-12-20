@@ -44,7 +44,7 @@ export class RegisterService {
     if (existing) {
       const today = new Date();
       if (existing.validTo > today) {
-         await this.mailService.sendMembershipEmail(
+         await this.mailService.sendMembership(
           existing.email,
           existing.firstName,
           existing.membershipId,
@@ -179,7 +179,7 @@ async sendMembershipEmail(registrationId: string) {
 
   const membershipId = registration.membershipId.replace(/^InActive/, '');
 
-  return this.mailService.sendMembershipEmail(
+  return this.mailService.sendMembership(
     registration.email,
     registration.firstName,
     membershipId,
